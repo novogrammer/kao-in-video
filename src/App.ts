@@ -8,7 +8,7 @@ import * as faceMesh from "@mediapipe/face_mesh";
 import "./style.scss";
 import { Face } from "@tensorflow-models/face-landmarks-detection";
 
-setWasmPaths(`/lib/@tensorflow/tfjs-backend-wasm@${version_wasm}/dist/`);
+setWasmPaths(`./lib/@tensorflow/tfjs-backend-wasm@${version_wasm}/dist/`);
 
 console.log(`version_wasm: ${version_wasm}`);
 
@@ -57,7 +57,7 @@ export default class App{
       const detector = await faceLandmarksDetection.createDetector(model, {
         runtime: "mediapipe",
         // solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh',
-        solutionPath: '/lib/@mediapipe/face_mesh',
+        solutionPath: './lib/@mediapipe/face_mesh',
         refineLandmarks:true,
       });
 
