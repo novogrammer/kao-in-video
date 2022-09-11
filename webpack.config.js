@@ -14,8 +14,8 @@ const stylesHandler = 'style-loader';
 
 const config = {
     entry: {
-        index:'./src/index.ts',
-        recorder:'./src/recorder.ts',
+        index:'./src/js/index.ts',
+        recorder:'./src/js/recorder.ts',
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
@@ -52,8 +52,8 @@ const config = {
                     to:`lib/@mediapipe/face_mesh`,
                 },
                 {
-                    from:"src/assets",
-                    to:`assets`,
+                    from:"src/movie",
+                    to:`movie`,
                 },
             ]
         }),

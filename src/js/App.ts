@@ -5,7 +5,7 @@ import * as faceLandmarksDetection from "@tensorflow-models/face-landmarks-detec
 
 import * as faceMesh from "@mediapipe/face_mesh";
 
-import "./style.scss";
+import "../css/style.scss";
 import { Face } from "@tensorflow-models/face-landmarks-detection";
 
 setWasmPaths(`${window.relRoot}lib/@tensorflow/tfjs-backend-wasm@${version_wasm}/dist/`);
