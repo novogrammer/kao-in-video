@@ -1,4 +1,4 @@
-import { serialize, deserialize } from 'bson';
+import { serialize } from 'bson';
 import * as pako from "pako";
 import "@tensorflow/tfjs-backend-webgl";
 
@@ -180,12 +180,6 @@ export default class RecorderApp {
     }
 
     downloadBinary(bson_gzip,`${filename}.bson.gz`,"application/gzip");
-
-    // console.time("pako.ungzip(bson_gzip)");
-    // const bson2 = pako.ungzip(bson_gzip);
-    // console.timeEnd("pako.ungzip(bson_gzip)");
-    // const result2=deserialize(bson2);
-    // console.log(result2);
 
   }
 }

@@ -7,6 +7,7 @@ import * as faceMesh from "@mediapipe/face_mesh";
 
 import "../css/style.scss";
 import { Face } from "@tensorflow-models/face-landmarks-detection";
+import Player from "./Player";
 
 setWasmPaths(`${window.relRoot}lib/@tensorflow/tfjs-backend-wasm@${version_wasm}/dist/`);
 
@@ -20,18 +21,35 @@ console.log(`faceLandmarksDetection:`, faceLandmarksDetection);
 const WEBCAM_WIDTH=256;
 const WEBCAM_HEIGHT=256;
 
+interface videoParams{
+  src:string,
+}
+
+const videoParamsList=[
+  {
+    url:`${window.relRoot}movie/kari.mp4`,
+  }
+];
+
 export default class App{
   webcam:HTMLVideoElement;
   canvas:HTMLCanvasElement;
   context2d:CanvasRenderingContext2D;
   setupPromise:Promise<void>;
   detector:faceLandmarksDetection.FaceLandmarksDetector|null;
+  player:Player;
   constructor(){
     this.webcam=document.querySelector(".p-app__webcam");
     this.canvas=document.querySelector(".p-app__view");
     this.context2d=this.canvas.getContext("2d");
     this.detector=null;
+    this.player=new Player();
     this.setupPromise=this.setupAsync();
+  }
+  async setupVideoAsync(){
+    const video=document.createElement("video");
+    video.playsInline=true;
+    video.muted=true;
   }
   async setupWebcamAsync(){
     if(!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)){
@@ -78,6 +96,7 @@ export default class App{
   async setupAsync(){
     await this.setupWebcamAsync();
     await this.setupDetectorAsync();
+    await this.setupVideoAsync();
     this.setupEvents();
   }
   drawFace(face:Face){
