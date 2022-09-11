@@ -13,7 +13,10 @@ const stylesHandler = 'style-loader';
 
 
 const config = {
-    entry: './src/index.ts',
+    entry: {
+        index:'./src/index.ts',
+        recorder:'./src/recorder.ts',
+    },
     output: {
         path: path.resolve(__dirname, 'dist'),
     },
@@ -23,7 +26,20 @@ const config = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './src/index.html',
+            template: './src/index.html.ejs',
+            templateParameters:{
+                relRoot:"./",
+            },
+            filename: 'index.html',
+            chunks:["index"],
+        }),
+        new HtmlWebpackPlugin({
+            template: './src/recorder/index.html.ejs',
+            templateParameters:{
+                relRoot:"../",
+            },
+            filename: 'recorder/index.html',
+            chunks:["recorder"],
         }),
         new CopyPlugin({
             patterns:[
