@@ -15,6 +15,7 @@
   "author": "Yusuke Kawamoto <novogrammer@gmail.com> (https://github.com/novogrammer/)",
   "license": "ISC",
   "devDependencies": {
+    "@types/pako": "^2.0.0",
     "@webpack-cli/generators": "^2.5.0",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.1",
@@ -34,6 +35,8 @@
     "@tensorflow/tfjs-backend-wasm": "^3.20.0",
     "@tensorflow/tfjs-backend-webgl": "^3.20.0",
     "@tensorflow/tfjs-converter": "^3.20.0",
-    "@tensorflow/tfjs-core": "^3.20.0"
+    "@tensorflow/tfjs-core": "^3.20.0",
+    "bson": "^4.7.0",
+    "pako": "^2.0.4"
   }
 }

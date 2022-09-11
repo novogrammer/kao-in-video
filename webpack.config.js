@@ -51,6 +51,10 @@ const config = {
                     from:"node_modules/@mediapipe/face_mesh",
                     to:`lib/@mediapipe/face_mesh`,
                 },
+                {
+                    from:"src/assets",
+                    to:`assets`,
+                },
             ]
         }),
 

@@ -1,3 +1,5 @@
+import { serialize, deserialize } from 'bson';
+import * as pako from "pako";
 import "@tensorflow/tfjs-backend-webgl";
 
 import { setWasmPaths, version_wasm } from "@tensorflow/tfjs-backend-wasm";
@@ -6,6 +8,7 @@ import * as faceLandmarksDetection from "@tensorflow-models/face-landmarks-detec
 
 
 import * as faceMesh from "@mediapipe/face_mesh";
+import { downloadBinary } from './download_utils';
 // setWasmPaths(
 //   `https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@${version_wasm}/dist/`
 // );
@@ -161,7 +164,28 @@ export default class RecorderApp {
   }
   onEnded(event:Event){
     console.log(this.facesList);
-    const json = JSON.stringify(this.facesList);
-    console.log(json.length);
+    const bson = serialize({facesList:this.facesList});
+    console.log(`bson.length: ${bson.length}`);
+    console.log(bson);
+
+    console.time("pako.gzip(bson)");
+    const bson_gzip = pako.gzip(bson);
+    console.timeEnd("pako.gzip(bson)");
+    console.log(`bson_gzip.length: ${bson_gzip.length}`);
+
+    let filename="download";
+    if (this.file.files && this.file.files[0]) {
+      const file = this.file.files[0];
+      filename=file.name;
+    }
+
+    downloadBinary(bson_gzip,`${filename}.bson.gz`,"application/gzip");
+
+    // console.time("pako.ungzip(bson_gzip)");
+    // const bson2 = pako.ungzip(bson_gzip);
+    // console.timeEnd("pako.ungzip(bson_gzip)");
+    // const result2=deserialize(bson2);
+    // console.log(result2);
+
   }
 }
