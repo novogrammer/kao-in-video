@@ -1,3 +1,3 @@
-import App from "./App";
+import RecorderApp from "./RecorderApp";
 
-window.app=new App();
+window.recorderApp=new RecorderApp();

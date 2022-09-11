@@ -27,8 +27,8 @@ export default class App{
   setupPromise:Promise<void>;
   detector:faceLandmarksDetection.FaceLandmarksDetector|null;
   constructor(){
-    this.video=document.querySelector(".app__video");
-    this.canvas=document.querySelector(".app__view");
+    this.video=document.querySelector(".p-app__video");
+    this.canvas=document.querySelector(".p-app__view");
     this.context2d=this.canvas.getContext("2d");
     this.detector=null;
     this.setupPromise=this.setupAsync();

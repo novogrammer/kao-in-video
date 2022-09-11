@@ -1,0 +1,167 @@
+import "@tensorflow/tfjs-backend-webgl";
+
+import { setWasmPaths, version_wasm } from "@tensorflow/tfjs-backend-wasm";
+
+import * as faceLandmarksDetection from "@tensorflow-models/face-landmarks-detection";
+
+
+import * as faceMesh from "@mediapipe/face_mesh";
+// setWasmPaths(
+//   `https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@${version_wasm}/dist/`
+// );
+setWasmPaths(`/assets/lib/@tensorflow/tfjs-backend-wasm@${version_wasm}/dist/`);
+
+console.log(`version_wasm: ${version_wasm}`);
+
+console.log(`faceMesh.VERSION: ${faceMesh.VERSION}`);
+
+console.log(`faceLandmarksDetection:`, faceLandmarksDetection);
+
+export default class RecorderApp {
+  canvas: HTMLCanvasElement;
+
+  context2d: CanvasRenderingContext2D;
+
+  file: HTMLInputElement;
+
+  video: HTMLVideoElement;
+
+  bindMap: {
+    [key: string]: Function;
+  };
+
+  setupPromise: Promise<void>;
+
+  detector: faceLandmarksDetection.FaceLandmarksDetector | null;
+
+  facesList: faceLandmarksDetection.Face[][];
+
+  constructor() {
+    this.canvas = document.querySelector(
+      ".p-recorder-app__canvas"
+    ) as HTMLCanvasElement;
+    this.context2d = this.canvas.getContext("2d") as CanvasRenderingContext2D;
+    this.file = document.querySelector(".p-recorder-app__file") as HTMLInputElement;
+    this.video = document.createElement("video");
+    this.video.muted = true;
+    this.video.playsInline = true;
+    this.video.autoplay = true;
+    this.bindMap = {};
+    this.detector = null;
+    this.facesList = [];
+    this.setupPromise = this.setupAsync();
+  }
+
+  async setupAsync() {
+    await this.setupDetectorAsync();
+    this.setupEvents();
+  }
+
+  getBind(methodName: string): Function {
+    let bind = this.bindMap[methodName];
+    if (!bind) {
+      const thisAny = this as { [key: string]: any };
+      bind = (thisAny[methodName] as Function).bind(this);
+      this.bindMap[methodName] = bind;
+    }
+    return bind;
+  }
+
+  async setupDetectorAsync() {
+    const model = faceLandmarksDetection.SupportedModels.MediaPipeFaceMesh;
+
+    try {
+
+      const detector = await faceLandmarksDetection.createDetector(model, {
+        runtime: "mediapipe",
+        // solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh',
+        solutionPath: '/lib/@mediapipe/face_mesh',
+        refineLandmarks: true,
+      });
+
+      this.detector = detector;
+    } catch (error) {
+      this.detector = null;
+      console.error(error);
+    }
+
+  }
+
+  setupEvents() {
+    this.file.addEventListener("change", this.getBind("onFileChange") as any);
+    if(!("requestVideoFrameCallback" in this.video)){
+      throw new Error("no requestVideoFrameCallback");
+    }
+    this.video.requestVideoFrameCallback(
+      this.getBind("onRequestVideoFrame") as VideoFrameRequestCallback
+    );
+    this.video.addEventListener("ended",this.getBind("onEnded") as any);
+  }
+
+  drawFace(face: faceLandmarksDetection.Face) {
+    this.context2d.save();
+    this.context2d.strokeStyle = "#f00";
+    this.context2d.strokeRect(face.box.xMin, face.box.yMin, face.box.width, face.box.height);
+    this.context2d.strokeStyle = "#f0f";
+    this.context2d.beginPath();
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [fromIndex, toIndex] of faceMesh.FACEMESH_TESSELATION) {
+      const from = face.keypoints[fromIndex];
+      const to = face.keypoints[toIndex];
+      this.context2d.moveTo(from.x, from.y);
+      this.context2d.lineTo(to.x, to.y);
+    }
+    this.context2d.stroke();
+
+
+
+    this.context2d.restore();
+  }
+
+  async onRequestVideoFrame(now: DOMHighResTimeStamp, metadata: VideoFrameMetadata) {
+    this.video.requestVideoFrameCallback(
+      this.getBind("onRequestVideoFrame") as VideoFrameRequestCallback
+    );
+    this.canvas.width = metadata.width;
+    this.canvas.height = metadata.height;
+    this.context2d.drawImage(this.video, 0, 0);
+    if (!this.detector) {
+      throw new Error("detector is null");
+    }
+
+    try {
+      const faces = await this.detector.estimateFaces(this.video, {
+        flipHorizontal: false,
+      });
+      for (const face of faces) {
+        this.drawFace(face);
+      }
+      this.facesList.push(faces);
+
+    } catch (error) {
+      this.detector.dispose();
+      this.detector = null;
+      console.error(error);
+    }
+
+  }
+
+  onFileChange(event: InputEvent) {
+    this.setupPromise.then(() => {
+      const target = event.target as HTMLInputElement;
+      if (target.files && target.files[0]) {
+        const file = target.files[0];
+        URL.revokeObjectURL(this.video.currentSrc);
+        const url = URL.createObjectURL(file);
+        this.video.src = url;
+        this.facesList = [];
+        this.video.play();
+      }
+    });
+  }
+  onEnded(event:Event){
+    console.log(this.facesList);
+    const json = JSON.stringify(this.facesList);
+    console.log(json.length);
+  }
+}
