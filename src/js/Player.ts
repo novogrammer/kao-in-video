@@ -29,9 +29,7 @@ export default class Player{
 
 
     this.loadAsync().then(()=>{
-      setTimeout(()=>{
-        this.play();
-      },1000);
+      this.play();
     })
 
     
