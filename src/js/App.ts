@@ -17,23 +17,23 @@ console.log(`faceMesh.VERSION: ${faceMesh.VERSION}`);
 
 console.log(`faceLandmarksDetection:`, faceLandmarksDetection);
 
-const VIDEO_WIDTH=256;
-const VIDEO_HEIGHT=256;
+const WEBCAM_WIDTH=256;
+const WEBCAM_HEIGHT=256;
 
 export default class App{
-  video:HTMLVideoElement;
+  webcam:HTMLVideoElement;
   canvas:HTMLCanvasElement;
   context2d:CanvasRenderingContext2D;
   setupPromise:Promise<void>;
   detector:faceLandmarksDetection.FaceLandmarksDetector|null;
   constructor(){
-    this.video=document.querySelector(".p-app__video");
+    this.webcam=document.querySelector(".p-app__webcam");
     this.canvas=document.querySelector(".p-app__view");
     this.context2d=this.canvas.getContext("2d");
     this.detector=null;
     this.setupPromise=this.setupAsync();
   }
-  async setupVideoAsync(){
+  async setupWebcamAsync(){
     if(!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)){
       throw new Error("no getUserMedia");
     }
@@ -41,12 +41,12 @@ export default class App{
       audio:false,
       video:{
         facingMode: "user",
-        width:VIDEO_WIDTH,
-        height:VIDEO_HEIGHT,
+        width:WEBCAM_WIDTH,
+        height:WEBCAM_HEIGHT,
       }
     });
-    this.video.srcObject=mediaStream;
-    this.video.play();
+    this.webcam.srcObject=mediaStream;
+    this.webcam.play();
 
   }
   async setupDetectorAsync(){
@@ -76,7 +76,7 @@ export default class App{
     animateAsync();
   }
   async setupAsync(){
-    await this.setupVideoAsync();
+    await this.setupWebcamAsync();
     await this.setupDetectorAsync();
     this.setupEvents();
   }
@@ -99,16 +99,16 @@ export default class App{
     this.context2d.restore();
   }
   async onTickAsync(){
-    if(this.video.srcObject){
-      this.canvas.width=this.video.videoWidth;
-      this.canvas.height=this.video.videoHeight;
-      this.context2d.drawImage(this.video,0,0);
+    if(this.webcam.srcObject){
+      this.canvas.width=this.webcam.videoWidth;
+      this.canvas.height=this.webcam.videoHeight;
+      this.context2d.drawImage(this.webcam,0,0);
 
     }
     if(this.detector){
       let faces:Face[]|null = null;
       try{
-        faces = await this.detector.estimateFaces(this.video,{
+        faces = await this.detector.estimateFaces(this.webcam,{
           flipHorizontal: false,
         });
         for(let face of faces){
