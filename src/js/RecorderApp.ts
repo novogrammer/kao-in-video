@@ -92,12 +92,7 @@ export default class RecorderApp {
 
   setupEvents() {
     this.file.addEventListener("change", this.getBind("onFileChange") as any);
-    if(!("requestVideoFrameCallback" in this.video)){
-      throw new Error("no requestVideoFrameCallback");
-    }
-    this.video.requestVideoFrameCallback(
-      this.getBind("onRequestVideoFrame") as VideoFrameRequestCallback
-    );
+
     this.video.addEventListener("ended",this.getBind("onEnded") as any);
   }
 
@@ -151,6 +146,13 @@ export default class RecorderApp {
 
   onFileChange(event: InputEvent) {
     this.setupPromise.then(() => {
+      if(!("requestVideoFrameCallback" in this.video)){
+        throw new Error("no requestVideoFrameCallback");
+      }
+      this.video.requestVideoFrameCallback(
+        this.getBind("onRequestVideoFrame") as VideoFrameRequestCallback
+      );
+
       const target = event.target as HTMLInputElement;
       if (target.files && target.files[0]) {
         const file = target.files[0];
