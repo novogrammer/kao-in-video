@@ -20,6 +20,8 @@ console.log(`faceMesh.VERSION: ${faceMesh.VERSION}`);
 
 console.log(`faceLandmarksDetection:`, faceLandmarksDetection);
 
+const RECORDER_PLAYBACK_RATE=0.5;
+
 export default class RecorderApp {
   canvas: HTMLCanvasElement;
 
@@ -39,6 +41,8 @@ export default class RecorderApp {
 
   facesList: faceLandmarksDetection.Face[][];
 
+  endedCount: number;
+
   constructor() {
     this.canvas = document.querySelector(
       ".p-recorder-app__canvas"
@@ -49,9 +53,11 @@ export default class RecorderApp {
     this.video.muted = true;
     this.video.playsInline = true;
     this.video.autoplay = true;
+
     this.bindMap = {};
     this.detector = null;
     this.facesList = [];
+    this.endedCount=0;
     this.setupPromise = this.setupAsync();
   }
 
@@ -134,7 +140,9 @@ export default class RecorderApp {
       for (const face of faces) {
         this.drawFace(face);
       }
-      this.facesList.push(faces);
+      if(this.endedCount==1){
+        this.facesList.push(faces);
+      }
 
     } catch (error) {
       this.detector.dispose();
@@ -165,23 +173,33 @@ export default class RecorderApp {
     });
   }
   onEnded(event:Event){
-    console.log(this.facesList);
-    const bson = serialize({facesList:this.facesList});
-    console.log(`bson.length: ${bson.length}`);
-    console.log(bson);
 
-    console.time("pako.gzip(bson)");
-    const bson_gzip = pako.gzip(bson);
-    console.timeEnd("pako.gzip(bson)");
-    console.log(`bson_gzip.length: ${bson_gzip.length}`);
-
-    let filename="download";
-    if (this.file.files && this.file.files[0]) {
-      const file = this.file.files[0];
-      filename=file.name;
+    this.endedCount+=1;
+    if(this.endedCount==2){
+      console.log(this.facesList);
+      const bson = serialize({
+        facesList:this.facesList,
+      });
+      console.log(`bson.length: ${bson.length}`);
+      console.log(bson);
+  
+      console.time("pako.gzip(bson)");
+      const bson_gzip = pako.gzip(bson);
+      console.timeEnd("pako.gzip(bson)");
+      console.log(`bson_gzip.length: ${bson_gzip.length}`);
+  
+      let filename="download";
+      if (this.file.files && this.file.files[0]) {
+        const file = this.file.files[0];
+        filename=file.name;
+      }
+  
+      downloadBinary(bson_gzip,`${filename}.bson.gz`,"application/gzip");
+    }else{
+      this.video.load();
+      this.video.playbackRate=RECORDER_PLAYBACK_RATE;
+      this.video.play();
     }
-
-    downloadBinary(bson_gzip,`${filename}.bson.gz`,"application/gzip");
 
   }
 }
