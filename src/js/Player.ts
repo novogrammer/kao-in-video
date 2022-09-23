@@ -8,6 +8,10 @@ import * as faceMesh from "@mediapipe/face_mesh";
 
 import axios from "axios";
 
+interface PlayerOptions{
+  url:string;
+}
+
 export default class Player{
   video:HTMLVideoElement;
   canvas:HTMLCanvasElement;
@@ -15,13 +19,15 @@ export default class Player{
   currentIndex:number;
   handleVideoFrameCallback:number|null;
   facesList: faceLandmarksDetection.Face[][];
-  constructor(){
+  options: PlayerOptions;
+  constructor(options:PlayerOptions){
     this.video=document.createElement("video");
     this.canvas=document.createElement("canvas");
     this.context2d=this.canvas.getContext("2d");
     this.currentIndex=0;
     this.handleVideoFrameCallback=null;
     this.facesList=[];
+    this.options=options;
     // TODO
     document.body.appendChild(this.canvas);
 
@@ -35,7 +41,7 @@ export default class Player{
     
   }
   async loadAsync(){
-    const mp4Url=`${window.relRoot}movie/kari.mp4`;
+    const mp4Url=this.options.url;
     const bsonGzUrl=`${mp4Url}.bson.gz`;
     const bsonGzBuffer=(await axios.get(bsonGzUrl,{ responseType : 'arraybuffer' })).data as ArrayBuffer;
     const bsonGz=new Uint8Array(bsonGzBuffer);

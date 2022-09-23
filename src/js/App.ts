@@ -43,7 +43,7 @@ export default class App{
     this.canvas=document.querySelector(".p-app__view");
     this.context2d=this.canvas.getContext("2d");
     this.detector=null;
-    this.player=new Player();
+    this.player=new Player(videoParamsList[0]);
     this.setupPromise=this.setupAsync();
   }
   async setupVideoAsync(){
