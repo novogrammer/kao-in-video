@@ -16,7 +16,6 @@ export default class Player{
   video:HTMLVideoElement;
   canvas:HTMLCanvasElement;
   context2d:CanvasRenderingContext2D;
-  currentIndex:number;
   handleVideoFrameCallback:number|null;
   facesList: faceLandmarksDetection.Face[][];
   options: PlayerOptions;
@@ -24,7 +23,6 @@ export default class Player{
     this.video=document.createElement("video");
     this.canvas=document.createElement("canvas");
     this.context2d=this.canvas.getContext("2d");
-    this.currentIndex=0;
     this.handleVideoFrameCallback=null;
     this.facesList=[];
     this.options=options;
@@ -84,7 +82,6 @@ export default class Player{
       this.handleVideoFrameCallback=null;
     }
     this.handleVideoFrameCallback=this.video.requestVideoFrameCallback(this.onRequestVideoFrame.bind(this));
-    this.currentIndex=0;
   }
 
   async onRequestVideoFrame(now: DOMHighResTimeStamp, metadata: VideoFrameMetadata) {
@@ -94,16 +91,15 @@ export default class Player{
     this.canvas.height = metadata.height;
     this.context2d.drawImage(this.video, 0, 0);
 
-    if(this.currentIndex<this.facesList.length){
-      const faces=this.facesList[this.currentIndex];
+    const currentIndex=Math.floor(this.facesList.length*this.video.currentTime/this.video.duration);
+    if(currentIndex<this.facesList.length){
+      const faces=this.facesList[currentIndex];
       for(let face of faces){
         this.drawFace(face);
       }
     }else{
-      console.error(`out of bounds ${this.currentIndex}/${this.facesList.length}`)
+      console.error(`out of bounds ${currentIndex}/${this.facesList.length}`)
     }
-
-    this.currentIndex += 1;
 
   }
   onEnded(event:Event){
