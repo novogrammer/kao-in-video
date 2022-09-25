@@ -37,6 +37,8 @@ export default class App{
   setupPromise:Promise<void>;
   detector:faceLandmarksDetection.FaceLandmarksDetector|null;
   player:Player;
+  handleVideoFrameCallback:number|null=null;
+
   constructor(){
     this.webcam=document.querySelector(".p-app__webcam");
     this.canvas=document.querySelector(".p-app__view");
@@ -86,11 +88,21 @@ export default class App{
     
   }
   setupEvents(){
-    const animateAsync=async()=>{
-      await this.onTickAsync();
-      requestAnimationFrame(animateAsync);
+    // const animateAsync=async()=>{
+    //   await this.onTickAsync();
+    //   requestAnimationFrame(animateAsync);
+    // }
+    // animateAsync();
+    if(!("requestVideoFrameCallback" in this.webcam)){
+      throw new Error("no requestVideoFrameCallback");
     }
-    animateAsync();
+
+    if(this.handleVideoFrameCallback!=null){
+      this.webcam.cancelVideoFrameCallback(this.handleVideoFrameCallback);
+      this.handleVideoFrameCallback=null;
+    }
+    this.handleVideoFrameCallback=this.webcam.requestVideoFrameCallback(this.onRequestVideoFrame.bind(this));
+
   }
   async setupAsync(){
     await this.setupWebcamAsync();
@@ -116,12 +128,20 @@ export default class App{
     
     this.context2d.restore();
   }
+  async onRequestVideoFrame(now: DOMHighResTimeStamp, metadata: VideoFrameMetadata) {
+    this.handleVideoFrameCallback=this.webcam.requestVideoFrameCallback(this.onRequestVideoFrame.bind(this));
+
+    await this.onTickAsync();
+  }
   async onTickAsync(){
-    if(this.webcam.srcObject){
+    if(!this.webcam.srcObject){
+      console.log("this.webcam.srcObject is null");
+      return;
+
+    }else{
       this.canvas.width=this.webcam.videoWidth;
       this.canvas.height=this.webcam.videoHeight;
       this.context2d.drawImage(this.webcam,0,0);
-
     }
     if(this.detector){
       let faces:Face[]|null = null;

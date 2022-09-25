@@ -29,7 +29,7 @@ interface ThreeObjects{
 export default class Player{
   video:HTMLVideoElement;
   canvas:HTMLCanvasElement;
-  handleVideoFrameCallback:number|null;
+  handleVideoFrameCallback:number|null=null;
   facesList: faceLandmarksDetection.Face[][];
   sourceVideo: HTMLVideoElement;
   options: PlayerOptions;
@@ -40,7 +40,6 @@ export default class Player{
     this.video.muted=true;
     this.video.loop=true;
     this.canvas=document.createElement("canvas");
-    this.handleVideoFrameCallback=null;
     this.facesList=[];
     this.sourceVideo=sourceVideo;
     this.options=options;
