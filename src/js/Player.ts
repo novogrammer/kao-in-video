@@ -36,6 +36,8 @@ export default class Player{
   three:ThreeObjects|null=null;
   constructor(sourceVideo:HTMLVideoElement,options:PlayerOptions){
     this.video=document.createElement("video");
+    this.video.playsInline=true;
+    this.video.muted=true;
     this.video.loop=true;
     this.canvas=document.createElement("canvas");
     this.handleVideoFrameCallback=null;
