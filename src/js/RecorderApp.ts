@@ -178,6 +178,10 @@ export default class RecorderApp {
     if(this.endedCount==2){
       console.log(this.facesList);
       const bson = serialize({
+        video:{
+          width:this.canvas.width,
+          height:this.canvas.height,
+        },
         facesList:this.facesList,
       });
       console.log(`bson.length: ${bson.length}`);
