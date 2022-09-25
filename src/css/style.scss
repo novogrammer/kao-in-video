@@ -1,0 +1,17 @@
+
+.c-start{
+  position:fixed;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:50vw;
+  font-size:10vw;
+  text-align: center;
+  cursor:pointer;
+  border-radius: 9999px;
+  border:1px solid #000;
+  background:rgba(255,255,255,0.8);
+  &--hidden{
+    display:none;
+  }
+}
