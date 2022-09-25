@@ -8,6 +8,7 @@ import * as faceMesh from "@mediapipe/face_mesh";
 import "../css/style.scss";
 import { Face } from "@tensorflow-models/face-landmarks-detection";
 import Player from "./Player";
+import { WEBCAM_HEIGHT, WEBCAM_WIDTH } from "./constants";
 
 setWasmPaths(`${window.relRoot}lib/@tensorflow/tfjs-backend-wasm@${version_wasm}/dist/`);
 
@@ -18,8 +19,6 @@ console.log(`faceMesh.VERSION: ${faceMesh.VERSION}`);
 
 console.log(`faceLandmarksDetection:`, faceLandmarksDetection);
 
-const WEBCAM_WIDTH=256;
-const WEBCAM_HEIGHT=256;
 
 interface videoParams{
   src:string,
@@ -43,7 +42,7 @@ export default class App{
     this.canvas=document.querySelector(".p-app__view");
     this.context2d=this.canvas.getContext("2d");
     this.detector=null;
-    this.player=new Player(videoParamsList[0]);
+    this.player=new Player(this.webcam,videoParamsList[0]);
     this.setupPromise=this.setupAsync();
   }
   async setupVideoAsync(){
@@ -133,6 +132,7 @@ export default class App{
         for(let face of faces){
           this.drawFace(face);
         }
+        this.player.updateFaceMaterialList(faces);
         
       }catch(error){
         this.detector.dispose();

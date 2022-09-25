@@ -1,3 +1,6 @@
 import App from "./App";
 
-window.app=new App();
+
+window.addEventListener("load",()=>{
+  window.app=new App();
+});

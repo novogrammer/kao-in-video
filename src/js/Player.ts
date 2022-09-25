@@ -12,6 +12,7 @@ import * as faceMesh from "@mediapipe/face_mesh";
 import axios from "axios";
 import * as THREE from "three";
 import { FACE_INDEX_LIST, NUM_KEYPOINTS } from './face_constants';
+import { WEBCAM_HEIGHT, WEBCAM_WIDTH } from './constants';
 
 interface PlayerOptions{
   url:string;
@@ -22,6 +23,7 @@ interface ThreeObjects{
   scene:THREE.Scene;
   camera:THREE.OrthographicCamera;
   faceMesh:THREE.Mesh;
+  sourceVideoTexture:THREE.VideoTexture;
 }
 
 export default class Player{
@@ -29,13 +31,16 @@ export default class Player{
   canvas:HTMLCanvasElement;
   handleVideoFrameCallback:number|null;
   facesList: faceLandmarksDetection.Face[][];
+  sourceVideo: HTMLVideoElement;
   options: PlayerOptions;
   three:ThreeObjects|null=null;
-  constructor(options:PlayerOptions){
+  constructor(sourceVideo:HTMLVideoElement,options:PlayerOptions){
     this.video=document.createElement("video");
+    this.video.loop=true;
     this.canvas=document.createElement("canvas");
     this.handleVideoFrameCallback=null;
     this.facesList=[];
+    this.sourceVideo=sourceVideo;
     this.options=options;
     // TODO
     document.body.appendChild(this.canvas);
@@ -94,7 +99,7 @@ export default class Player{
     videoTexture.encoding=THREE.sRGBEncoding;
     const material=new THREE.MeshBasicMaterial({
       // side:THREE.DoubleSide,
-      color:0xff00ff,
+      // color:0xff00ff,
       map:videoTexture,
     });
     const mesh=new THREE.Mesh(geometry,material);
@@ -115,24 +120,38 @@ export default class Player{
     geometry.computeVertexNormals();
 
   }
-  updateFaceMaterial(faceMesh:THREE.Mesh,face:faceLandmarksDetection.Face){
+  updateFaceMaterial(faceMesh:THREE.Mesh,sourceFace:faceLandmarksDetection.Face){
     const geometry=faceMesh.geometry;
     const material=faceMesh.material as THREE.MeshBasicMaterial;
 
+    const {sourceVideoTexture}=this.three;
 
-    const width=this.canvas.width;
-    const height=this.canvas.height;
     const uvList=[];
-    for(let keypoint of face.keypoints){
+    for(let keypoint of sourceFace.keypoints){
       uvList.push(
-        keypoint.x/width,
-        1-keypoint.y/height,
+        keypoint.x/WEBCAM_WIDTH,
+        1 - (keypoint.y/WEBCAM_HEIGHT),
       );
     }
     geometry.setAttribute("uv",new THREE.Float32BufferAttribute(uvList,2));
     geometry.getAttribute("uv").needsUpdate=true;
 
+    material.map=sourceVideoTexture;
     material.needsUpdate=true;
+
+  }
+  updateFaceMaterialList(sourceFaceList:faceLandmarksDetection.Face[]){
+    if(!this.three){
+      console.log("this.three is null");
+      return;
+    }
+    const {faceMesh}=this.three;
+    if(0<sourceFaceList.length){
+      const sourceFace=sourceFaceList[0];
+      this.updateFaceMaterial(faceMesh,sourceFace);
+    }else{
+      // TODO: 一つもない時
+    }
 
   }
   async setupThreeAsync(){
@@ -159,20 +178,24 @@ export default class Player{
     faceMesh.position.set(width*-0.5,height*-0.5,0);
     scene.add(faceMesh);
 
-    const mesh=new THREE.Mesh(
-      new THREE.BoxGeometry(10,10,10),
-      new THREE.MeshBasicMaterial({color:0x00ff00})
-    );
-    scene.add(mesh);
+    // const mesh=new THREE.Mesh(
+    //   new THREE.BoxGeometry(10,10,10),
+    //   new THREE.MeshBasicMaterial({color:0x00ff00})
+    // );
+    // scene.add(mesh);
 
     const camera = new THREE.OrthographicCamera(width * -0.5,width*0.5,height*0.5,height*-0.5,0,1000);
     camera.position.z=500;
+
+    const sourceVideoTexture = new THREE.VideoTexture(this.sourceVideo);
+    sourceVideoTexture.encoding=THREE.sRGBEncoding;
 
     this.three={
       renderer,
       scene,
       camera,
       faceMesh,
+      sourceVideoTexture,
     };
     
   }
@@ -224,7 +247,6 @@ export default class Player{
       if(0<faces.length){
         const face=faces[0];
         this.updateFaceGeometry(faceMesh,face);
-        this.updateFaceMaterial(faceMesh,face);
         face.keypoints[0]
       }
       // for(let face of faces){
