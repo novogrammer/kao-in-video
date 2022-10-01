@@ -12,7 +12,7 @@ import * as faceMesh from "@mediapipe/face_mesh";
 import axios from "axios";
 import * as THREE from "three";
 import { FACE_INDEX_LIST, NUM_KEYPOINTS } from './face_constants';
-import { WEBCAM_HEIGHT, WEBCAM_WIDTH } from './constants';
+import { RECORD_MAX_FACES, WEBCAM_HEIGHT, WEBCAM_WIDTH } from './constants';
 
 interface PlayerOptions{
   url:string;
@@ -22,7 +22,7 @@ interface ThreeObjects{
   renderer:THREE.WebGLRenderer;
   scene:THREE.Scene;
   camera:THREE.OrthographicCamera;
-  faceMesh:THREE.Mesh;
+  faceMeshList:THREE.Mesh[];
   sourceVideoTexture:THREE.VideoTexture;
 }
 
@@ -159,10 +159,12 @@ export default class Player{
       console.log("this.three is null");
       return;
     }
-    const {faceMesh}=this.three;
+    const {faceMeshList}=this.three;
     if(0<sourceFaceList.length){
       const sourceFace=sourceFaceList[0];
-      this.updateFaceMaterial(faceMesh,sourceFace);
+      for(let faceMesh of faceMeshList){
+        this.updateFaceMaterial(faceMesh,sourceFace);
+      }
     }else{
       // TODO: 一つもない時
     }
@@ -188,9 +190,14 @@ export default class Player{
       videoMesh.position.z=-500+0.1;
       scene.add(videoMesh);
     }
-    const faceMesh=this.createFaceMesh();
-    faceMesh.position.set(width*-0.5,height*-0.5,0);
-    scene.add(faceMesh);
+    const faceMeshList=[];
+    for(let i=0;i<RECORD_MAX_FACES;++i){
+      const faceMesh=this.createFaceMesh();
+      faceMesh.position.set(width*-0.5,height*-0.5,0);
+      scene.add(faceMesh);
+      faceMeshList.push(faceMesh);
+  
+    }
 
     // const mesh=new THREE.Mesh(
     //   new THREE.BoxGeometry(10,10,10),
@@ -208,7 +215,7 @@ export default class Player{
       renderer,
       scene,
       camera,
-      faceMesh,
+      faceMeshList,
       sourceVideoTexture,
     };
     
@@ -251,17 +258,23 @@ export default class Player{
     if(!this.three){
       throw new Error("this.three is null");
     }
-    const {renderer,scene,camera,faceMesh}=this.three;
+    const {renderer,scene,camera,faceMeshList}=this.three;
     renderer.render(scene,camera);
     
 
     const currentIndex=Math.floor(this.facesList.length*this.video.currentTime/this.video.duration);
     if(currentIndex<this.facesList.length){
       const faces=this.facesList[currentIndex];
-      if(0<faces.length){
-        const face=faces[0];
-        this.updateFaceGeometry(faceMesh,face);
-        face.keypoints[0]
+      for(let i=0;i<faceMeshList.length;++i){
+        const faceMesh=faceMeshList[i];
+        if(i<faces.length){
+          const face=faces[i];
+          this.updateFaceGeometry(faceMesh,face);
+          faceMesh.visible=true;
+        }else{
+          faceMesh.visible=false;
+        }
+  
       }
       // for(let face of faces){
       //   this.drawFace(face);
