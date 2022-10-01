@@ -10,6 +10,7 @@ import * as faceLandmarksDetection from "@tensorflow-models/face-landmarks-detec
 import * as faceMesh from "@mediapipe/face_mesh";
 import { downloadBinary } from './download_utils';
 import { IS_REFINE_LANDMARKS, RECORD_MAX_FACES } from './constants';
+import { drawFace } from './face_utils';
 // setWasmPaths(
 //   `https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@${version_wasm}/dist/`
 // );
@@ -104,25 +105,6 @@ export default class RecorderApp {
     this.video.addEventListener("ended",this.getBind("onEnded") as any);
   }
 
-  drawFace(face: faceLandmarksDetection.Face) {
-    this.context2d.save();
-    this.context2d.strokeStyle = "#f00";
-    this.context2d.strokeRect(face.box.xMin, face.box.yMin, face.box.width, face.box.height);
-    this.context2d.strokeStyle = "#f0f";
-    this.context2d.beginPath();
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [fromIndex, toIndex] of faceMesh.FACEMESH_TESSELATION) {
-      const from = face.keypoints[fromIndex];
-      const to = face.keypoints[toIndex];
-      this.context2d.moveTo(from.x, from.y);
-      this.context2d.lineTo(to.x, to.y);
-    }
-    this.context2d.stroke();
-
-
-
-    this.context2d.restore();
-  }
 
   async onRequestVideoFrame(now: DOMHighResTimeStamp, metadata: VideoFrameMetadata) {
     this.video.requestVideoFrameCallback(
@@ -140,7 +122,7 @@ export default class RecorderApp {
         flipHorizontal: false,
       });
       for (const face of faces) {
-        this.drawFace(face);
+        drawFace(this.context2d,face);
       }
       if(this.endedCount==1){
         this.facesList.push(faces);

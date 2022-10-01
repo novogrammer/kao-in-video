@@ -11,6 +11,7 @@ import Player from "./Player";
 import { IS_REFINE_LANDMARKS, WEBCAM_HEIGHT, WEBCAM_WIDTH } from "./constants";
 
 import Stats from "stats.js";
+import { drawFace } from "./face_utils";
 
 setWasmPaths(`${window.relRoot}lib/@tensorflow/tfjs-backend-wasm@${version_wasm}/dist/`);
 
@@ -121,43 +122,6 @@ export default class App{
     await this.setupVideoAsync();
     this.setupEvents();
   }
-  drawFace(face:Face){
-    this.context2d.save();
-    this.context2d.strokeStyle="#f00";
-    this.context2d.strokeRect(face.box.xMin,face.box.yMin,face.box.width,face.box.height);
-    this.context2d.strokeStyle="#f0f";
-    this.context2d.beginPath();
-    for(let [fromIndex,toIndex] of faceMesh.FACEMESH_TESSELATION){
-      const from=face.keypoints[fromIndex];
-      const to=face.keypoints[toIndex];
-      this.context2d.moveTo(from.x,from.y);
-      this.context2d.lineTo(to.x,to.y);
-    }
-    this.context2d.stroke();
-
-    if(IS_REFINE_LANDMARKS){
-      this.context2d.strokeStyle="#ff0";
-      this.context2d.beginPath();
-      for(let [fromIndex,toIndex] of faceMesh.FACEMESH_LEFT_IRIS){
-        const from=face.keypoints[fromIndex];
-        const to=face.keypoints[toIndex];
-        this.context2d.moveTo(from.x,from.y);
-        this.context2d.lineTo(to.x,to.y);
-      }
-      for(let [fromIndex,toIndex] of faceMesh.FACEMESH_RIGHT_IRIS){
-        const from=face.keypoints[fromIndex];
-        const to=face.keypoints[toIndex];
-        this.context2d.moveTo(from.x,from.y);
-        this.context2d.lineTo(to.x,to.y);
-      }
-      this.context2d.stroke();
-    }
-    
-    
-
-    
-    this.context2d.restore();
-  }
   async onRequestVideoFrame(now: DOMHighResTimeStamp, metadata: VideoFrameMetadata) {
     if(!this.stats){
       throw new Error("this.stats is null");
@@ -186,7 +150,7 @@ export default class App{
           flipHorizontal: false,
         });
         for(let face of faces){
-          this.drawFace(face);
+          drawFace(this.context2d,face);
         }
         this.player.updateFaceMaterialList(faces);
         

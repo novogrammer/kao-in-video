@@ -221,23 +221,6 @@ export default class Player{
     
   }
 
-  // drawFace(face: faceLandmarksDetection.Face) {
-  //   this.context2d.save();
-  //   this.context2d.strokeStyle = "#f00";
-  //   this.context2d.strokeRect(face.box.xMin, face.box.yMin, face.box.width, face.box.height);
-  //   this.context2d.strokeStyle = "#f0f";
-  //   this.context2d.beginPath();
-  //   // eslint-disable-next-line no-restricted-syntax
-  //   for (const [fromIndex, toIndex] of faceMesh.FACEMESH_TESSELATION) {
-  //     const from = face.keypoints[fromIndex];
-  //     const to = face.keypoints[toIndex];
-  //     this.context2d.moveTo(from.x, from.y);
-  //     this.context2d.lineTo(to.x, to.y);
-  //   }
-  //   this.context2d.stroke();
-
-  //   this.context2d.restore();
-  // }
   play(){
     this.video.load();
     this.video.play();
@@ -276,9 +259,6 @@ export default class Player{
         }
   
       }
-      // for(let face of faces){
-      //   this.drawFace(face);
-      // }
     }else{
       console.error(`out of bounds ${currentIndex}/${this.facesList.length}`)
     }

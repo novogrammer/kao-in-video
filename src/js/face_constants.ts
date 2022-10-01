@@ -1,7 +1,7 @@
 
 export const NUM_KEYPOINTS=468;
 // refineLandmarks:true のとき
-// export const NUM_KEYPOINTS_WITH_IRISES=478;
+export const NUM_KEYPOINTS_WITH_IRISES=478;
 
 export const FACE_INDEX_LIST = [
   127, 34, 139,
