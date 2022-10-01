@@ -96,12 +96,25 @@ export default class Player{
     }
     geometry.setAttribute("uv",new THREE.Float32BufferAttribute(uvList,2));
 
+    const colorList=[];
+    for(let i=0;i<NUM_KEYPOINTS;++i){
+      if(faceMesh.FACEMESH_FACE_OVAL.some((landmarkConnection:[number, number])=>landmarkConnection.some((index)=>index==i))){
+        colorList.push(1,1,1,0);
+      }else{
+        colorList.push(1,1,1,1);
+      }
+    }
+    geometry.setAttribute("color",new THREE.Float32BufferAttribute(colorList,4));
+
+
     const videoTexture=new THREE.VideoTexture(this.video);
     videoTexture.encoding=THREE.sRGBEncoding;
     const material=new THREE.MeshBasicMaterial({
       // side:THREE.DoubleSide,
       // color:0xff00ff,
       map:videoTexture,
+      transparent:true,
+      vertexColors:true,
     });
     const mesh=new THREE.Mesh(geometry,material);
     mesh.frustumCulled = false;
