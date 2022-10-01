@@ -9,6 +9,7 @@ import "../css/style.scss";
 import { Face } from "@tensorflow-models/face-landmarks-detection";
 import Player from "./Player";
 import { WEBCAM_HEIGHT, WEBCAM_WIDTH } from "./constants";
+import Stats from "stats.js";
 
 setWasmPaths(`${window.relRoot}lib/@tensorflow/tfjs-backend-wasm@${version_wasm}/dist/`);
 
@@ -30,22 +31,30 @@ const videoParamsList=[
   }
 ];
 
+const isProduction = process.env.NODE_ENV == 'production';
+
 export default class App{
   webcam:HTMLVideoElement;
   canvas:HTMLCanvasElement;
   context2d:CanvasRenderingContext2D;
   setupPromise:Promise<void>;
-  detector:faceLandmarksDetection.FaceLandmarksDetector|null;
+  detector:faceLandmarksDetection.FaceLandmarksDetector|null=null;
   player:Player;
   handleVideoFrameCallback:number|null=null;
+  stats:Stats|null=null;
+  isDebug:boolean=!isProduction;
 
   constructor(){
     this.webcam=document.querySelector(".p-app__webcam");
     this.canvas=document.querySelector(".p-app__view");
     this.context2d=this.canvas.getContext("2d");
-    this.detector=null;
     this.player=new Player(this.webcam,videoParamsList[0]);
     this.setupPromise=this.setupAsync();
+  }
+  setupStats(){
+    this.stats=new Stats();
+    this.stats.dom.style.display=this.isDebug? "block":"none";
+    document.body.appendChild(this.stats.dom);
   }
   async setupVideoAsync(){
     const video=document.createElement("video");
@@ -105,6 +114,7 @@ export default class App{
 
   }
   async setupAsync(){
+    this.setupStats();
     await this.setupWebcamAsync();
     await this.setupDetectorAsync();
     await this.setupVideoAsync();
@@ -129,9 +139,15 @@ export default class App{
     this.context2d.restore();
   }
   async onRequestVideoFrame(now: DOMHighResTimeStamp, metadata: VideoFrameMetadata) {
+    if(!this.stats){
+      throw new Error("this.stats is null");
+    }
+
     this.handleVideoFrameCallback=this.webcam.requestVideoFrameCallback(this.onRequestVideoFrame.bind(this));
 
+    this.stats.begin();
     await this.onTickAsync();
+    this.stats.end();
   }
   async onTickAsync(){
     if(!this.webcam.srcObject){
