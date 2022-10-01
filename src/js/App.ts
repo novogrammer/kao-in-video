@@ -8,7 +8,7 @@ import * as faceMesh from "@mediapipe/face_mesh";
 import "../css/style.scss";
 import { Face } from "@tensorflow-models/face-landmarks-detection";
 import Player from "./Player";
-import { IS_REFINE_LANDMARKS, WEBCAM_HEIGHT, WEBCAM_WIDTH } from "./constants";
+import { IS_PRODUCTION, IS_REFINE_LANDMARKS, WEBCAM_HEIGHT, WEBCAM_WIDTH } from "./constants";
 
 import Stats from "stats.js";
 import { drawFace } from "./face_utils";
@@ -33,7 +33,7 @@ const videoParamsList=[
   }
 ];
 
-const isProduction = process.env.NODE_ENV == 'production';
+
 
 export default class App{
   webcam:HTMLVideoElement;
@@ -44,7 +44,7 @@ export default class App{
   player:Player;
   handleVideoFrameCallback:number|null=null;
   stats:Stats|null=null;
-  isDebug:boolean=!isProduction;
+  isDebug:boolean=!IS_PRODUCTION;
 
   constructor(){
     this.webcam=document.querySelector(".p-app__webcam");
