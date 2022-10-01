@@ -9,7 +9,7 @@ import * as faceLandmarksDetection from "@tensorflow-models/face-landmarks-detec
 
 import * as faceMesh from "@mediapipe/face_mesh";
 import { downloadBinary } from './download_utils';
-import { RECORD_MAX_FACES } from './constants';
+import { IS_REFINE_LANDMARKS, RECORD_MAX_FACES } from './constants';
 // setWasmPaths(
 //   `https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@${version_wasm}/dist/`
 // );
@@ -86,7 +86,7 @@ export default class RecorderApp {
         runtime: "mediapipe",
         // solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh',
         solutionPath: '/lib/@mediapipe/face_mesh',
-        refineLandmarks: true,
+        refineLandmarks: IS_REFINE_LANDMARKS,
         maxFaces:RECORD_MAX_FACES,
       });
 

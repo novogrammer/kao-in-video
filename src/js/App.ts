@@ -8,7 +8,8 @@ import * as faceMesh from "@mediapipe/face_mesh";
 import "../css/style.scss";
 import { Face } from "@tensorflow-models/face-landmarks-detection";
 import Player from "./Player";
-import { WEBCAM_HEIGHT, WEBCAM_WIDTH } from "./constants";
+import { IS_REFINE_LANDMARKS, WEBCAM_HEIGHT, WEBCAM_WIDTH } from "./constants";
+
 import Stats from "stats.js";
 
 setWasmPaths(`${window.relRoot}lib/@tensorflow/tfjs-backend-wasm@${version_wasm}/dist/`);
@@ -86,7 +87,7 @@ export default class App{
         runtime: "mediapipe",
         // solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh',
         solutionPath: window.relRoot+'lib/@mediapipe/face_mesh',
-        refineLandmarks:true,
+        refineLandmarks:IS_REFINE_LANDMARKS,
       });
 
       this.detector=detector;
@@ -133,6 +134,25 @@ export default class App{
       this.context2d.lineTo(to.x,to.y);
     }
     this.context2d.stroke();
+
+    if(IS_REFINE_LANDMARKS){
+      this.context2d.strokeStyle="#ff0";
+      this.context2d.beginPath();
+      for(let [fromIndex,toIndex] of faceMesh.FACEMESH_LEFT_IRIS){
+        const from=face.keypoints[fromIndex];
+        const to=face.keypoints[toIndex];
+        this.context2d.moveTo(from.x,from.y);
+        this.context2d.lineTo(to.x,to.y);
+      }
+      for(let [fromIndex,toIndex] of faceMesh.FACEMESH_RIGHT_IRIS){
+        const from=face.keypoints[fromIndex];
+        const to=face.keypoints[toIndex];
+        this.context2d.moveTo(from.x,from.y);
+        this.context2d.lineTo(to.x,to.y);
+      }
+      this.context2d.stroke();
+    }
+    
     
 
     
