@@ -32,16 +32,18 @@ export default class Player{
   handleVideoFrameCallback:number|null=null;
   facesList: faceLandmarksDetection.Face[][];
   sourceVideo: HTMLVideoElement;
+  onEndedCallback:()=>void;
   options: PlayerOptions;
   three:ThreeObjects|null=null;
-  constructor(sourceVideo:HTMLVideoElement,destinationCanvas:HTMLCanvasElement,options:PlayerOptions){
+  constructor(sourceVideo:HTMLVideoElement,destinationCanvas:HTMLCanvasElement,onEndedCallback:()=>void,options:PlayerOptions){
     this.video=document.createElement("video");
     this.video.playsInline=true;
     this.video.muted=true;
-    this.video.loop=true;
+    // this.video.loop=true;
     this.canvas=destinationCanvas;
     this.facesList=[];
     this.sourceVideo=sourceVideo;
+    this.onEndedCallback=onEndedCallback;
     this.options=options;
 
     this.video.addEventListener("ended",this.onEnded.bind(this));
@@ -267,6 +269,9 @@ export default class Player{
     if(this.handleVideoFrameCallback!=null){
       this.video.cancelVideoFrameCallback(this.handleVideoFrameCallback);
       this.handleVideoFrameCallback=null;
+    }
+    if(this.onEndedCallback){
+      this.onEndedCallback();
     }
   }
 }

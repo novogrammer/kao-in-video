@@ -23,14 +23,17 @@ console.log(`faceMesh.VERSION: ${faceMesh.VERSION}`);
 console.log(`faceLandmarksDetection:`, faceLandmarksDetection);
 
 
-interface videoParams{
-  src:string,
+interface VideoParams{
+  url:string,
 }
 
-const videoParamsList=[
+const videoParamsList:VideoParams[]=[
   {
     url:`${window.relRoot}movie/kari.mp4`,
-  }
+  },
+  {
+    url:`${window.relRoot}movie/kari2.mp4`,
+  },
 ];
 
 
@@ -42,7 +45,8 @@ export default class App{
   canvas:HTMLCanvasElement;
   setupPromise:Promise<void>;
   detector:faceLandmarksDetection.FaceLandmarksDetector|null=null;
-  player:Player;
+  player:Player|null=null;
+  currentVideoIndex:number=0;
   handleVideoFrameCallback:number|null=null;
   stats:Stats|null=null;
   isDebug:boolean=!IS_PRODUCTION;
@@ -52,8 +56,15 @@ export default class App{
     this.debugCanvas=document.querySelector(".p-app__debug-view");
     this.debugContext2d=this.debugCanvas.getContext("2d");
     this.canvas=document.querySelector(".p-app__view");
-    this.player=new Player(this.webcam,this.canvas,videoParamsList[0]);
+
     this.setupPromise=this.setupAsync();
+    this.updateVideo(0);
+  }
+  updateVideo(index:number){
+    if(index<videoParamsList.length){
+      this.currentVideoIndex=index;
+      this.player=new Player(this.webcam,this.canvas,this.onPlayerEnded.bind(this),videoParamsList[this.currentVideoIndex]);
+    }
   }
   setupStats(){
     this.stats=new Stats();
@@ -162,5 +173,11 @@ export default class App{
         console.error(error);
       }
     }
+  }
+  onPlayerEnded(){
+    console.log("onPlayerEnded");
+
+    const nextVideoIndex=(this.currentVideoIndex+1)%videoParamsList.length;
+    this.updateVideo(nextVideoIndex);
   }
 }

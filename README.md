@@ -6,7 +6,7 @@ https://novogrammer.github.io/kao-in-video/
 ## 動画の準備
 
 MacBookのQuickTime Playerでムービー記録
-movで保存する。
+720pで書き出す。（movで保存される）
 
 ```
 $ ffmpeg -i ./movie.mov -pix_fmt yuv420p ./movie.mp4
