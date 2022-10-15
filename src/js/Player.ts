@@ -34,17 +34,15 @@ export default class Player{
   sourceVideo: HTMLVideoElement;
   options: PlayerOptions;
   three:ThreeObjects|null=null;
-  constructor(sourceVideo:HTMLVideoElement,options:PlayerOptions){
+  constructor(sourceVideo:HTMLVideoElement,destinationCanvas:HTMLCanvasElement,options:PlayerOptions){
     this.video=document.createElement("video");
     this.video.playsInline=true;
     this.video.muted=true;
     this.video.loop=true;
-    this.canvas=document.createElement("canvas");
+    this.canvas=destinationCanvas;
     this.facesList=[];
     this.sourceVideo=sourceVideo;
     this.options=options;
-    // TODO
-    document.body.appendChild(this.canvas);
 
     this.video.addEventListener("ended",this.onEnded.bind(this));
 

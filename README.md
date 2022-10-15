@@ -3,16 +3,30 @@
 Demo
 https://novogrammer.github.io/kao-in-video/
 
-This project has been created using **webpack-cli**, you can now run
+## 動画の準備
+
+MacBookのQuickTime Playerでムービー記録
+movで保存する。
 
 ```
-npm run build
+$ ffmpeg -i ./movie.mov -pix_fmt yuv420p ./movie.mp4
 ```
 
-or
+##　トラッキングデータの記録
+
+開発サーバーを立て、
+http://localhost:8080/recorder/
+へアクセス、mp4を読み込ませると2回再生され、*.bson.gzがダウンロードされる。
+
+
+## 開発サーバー
 
 ```
-yarn build
+$ npm run serve
 ```
 
-to bundle your application
+## ビルド
+
+```
+$ npm run build
+```

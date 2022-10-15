@@ -37,8 +37,9 @@ const videoParamsList=[
 
 export default class App{
   webcam:HTMLVideoElement;
+  debugCanvas:HTMLCanvasElement;
+  debugContext2d:CanvasRenderingContext2D;
   canvas:HTMLCanvasElement;
-  context2d:CanvasRenderingContext2D;
   setupPromise:Promise<void>;
   detector:faceLandmarksDetection.FaceLandmarksDetector|null=null;
   player:Player;
@@ -48,9 +49,10 @@ export default class App{
 
   constructor(){
     this.webcam=document.querySelector(".p-app__webcam");
+    this.debugCanvas=document.querySelector(".p-app__debug-view");
+    this.debugContext2d=this.debugCanvas.getContext("2d");
     this.canvas=document.querySelector(".p-app__view");
-    this.context2d=this.canvas.getContext("2d");
-    this.player=new Player(this.webcam,videoParamsList[0]);
+    this.player=new Player(this.webcam,this.canvas,videoParamsList[0]);
     this.setupPromise=this.setupAsync();
   }
   setupStats(){
@@ -139,9 +141,9 @@ export default class App{
       return;
 
     }else{
-      this.canvas.width=this.webcam.videoWidth;
-      this.canvas.height=this.webcam.videoHeight;
-      this.context2d.drawImage(this.webcam,0,0);
+      this.debugCanvas.width=this.webcam.videoWidth;
+      this.debugCanvas.height=this.webcam.videoHeight;
+      this.debugContext2d.drawImage(this.webcam,0,0);
     }
     if(this.detector){
       let faces:Face[]|null = null;
@@ -150,7 +152,7 @@ export default class App{
           flipHorizontal: false,
         });
         for(let face of faces){
-          drawFace(this.context2d,face);
+          drawFace(this.debugContext2d,face);
         }
         this.player.updateFaceMaterialList(faces);
         
