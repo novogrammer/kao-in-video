@@ -1,4 +1,7 @@
-
+@use "sass:math";
+body{
+  margin:0;
+}
 .c-start{
   position:fixed;
   left:50%;
@@ -13,5 +16,21 @@
   background:rgba(255,255,255,0.8);
   &--hidden{
     display:none;
+  }
+}
+
+.p-app{
+  &__webcam{
+    display:none;
+  }
+  &__debug-view{
+    position:absolute;
+    left:0;
+    top:0;
+  }
+  &__view{
+    position:absolute;
+    width:100vw;
+    height:math.div(100vw * 720 , 1280);
   }
 }
