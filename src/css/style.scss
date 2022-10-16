@@ -55,6 +55,7 @@ body{
     height:math.div(100vw * 720 , 1280);
   }
   &__ui{
+    display:none;
     position:fixed;
     right:0;
     bottom:0;

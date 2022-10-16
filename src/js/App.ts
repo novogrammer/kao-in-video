@@ -155,6 +155,9 @@ export default class App{
 
     window.addEventListener("keydown", this.onKeyDown.bind(this));
 
+    const uiElement=document.querySelector(".p-app__ui") as HTMLElement;
+    uiElement.style.display="block";
+
   }
   async setupAsync(){
     this.setupStats();
