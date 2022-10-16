@@ -150,7 +150,7 @@ export default class App{
     });
     const debugElement=document.querySelector(".c-button--debug") as HTMLElement;
     debugElement.addEventListener("click",()=>{
-      this.toggleFullscreen();
+      this.toggleDebug();
     });
 
     window.addEventListener("keydown", this.onKeyDown.bind(this));
