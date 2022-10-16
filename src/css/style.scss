@@ -43,11 +43,15 @@ body{
 .p-app{
   &__webcam{
     display:none;
+    width:25vw;
+    height:25vw;
   }
   &__debug-view{
     position:absolute;
     left:0;
     top:0;
+    width:25vw;
+    height:25vw;
   }
   &__view{
     position:absolute;
