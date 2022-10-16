@@ -9,7 +9,7 @@ MacBookのQuickTime Playerでムービー記録
 720pで書き出す。（movで保存される）
 
 ```
-$ ffmpeg -i ./movie.mov -pix_fmt yuv420p ./movie.mp4
+$ ffmpeg -i ./movie.mov -pix_fmt yuv420p -an ./movie.mp4
 ```
 
 ##　トラッキングデータの記録
