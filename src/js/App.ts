@@ -69,7 +69,8 @@ export default class App{
   setupStats(){
     this.stats=new Stats();
     this.stats.dom.style.display=this.isDebug? "block":"none";
-    document.body.appendChild(this.stats.dom);
+    const appElement=document.querySelector(".p-app");
+    appElement.appendChild(this.stats.dom);
   }
   async setupVideoAsync(){
     const video=document.createElement("video");
@@ -111,6 +112,22 @@ export default class App{
     }
     
   }
+  toggleDebug(){
+    this.isDebug=!this.isDebug;
+
+    this.stats.dom.style.display=this.isDebug? "block":"none";
+  }
+  toggleFullscreen(){
+    if (!document.fullscreenElement) {
+      const appElement=document.querySelector(".p-app");
+      appElement.requestFullscreen();
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+
+  }
   setupEvents(){
     // const animateAsync=async()=>{
     //   await this.onTickAsync();
@@ -126,6 +143,17 @@ export default class App{
       this.handleVideoFrameCallback=null;
     }
     this.handleVideoFrameCallback=this.webcam.requestVideoFrameCallback(this.onRequestVideoFrame.bind(this));
+
+    const fullscreenElement=document.querySelector(".c-button--fullscreen") as HTMLElement;
+    fullscreenElement.addEventListener("click",()=>{
+      this.toggleFullscreen();
+    });
+    const debugElement=document.querySelector(".c-button--debug") as HTMLElement;
+    debugElement.addEventListener("click",()=>{
+      this.toggleFullscreen();
+    });
+
+    window.addEventListener("keydown", this.onKeyDown.bind(this));
 
   }
   async setupAsync(){
@@ -179,5 +207,19 @@ export default class App{
 
     const nextVideoIndex=(this.currentVideoIndex+1)%videoParamsList.length;
     this.updateVideo(nextVideoIndex);
+  }
+  onKeyDown(event: KeyboardEvent){
+    switch (event.key) {
+      case "d":
+        this.toggleDebug();
+        break;
+      case "f":
+        this.toggleFullscreen();
+        break;
+      default:
+        // DO NOTHING
+        break;
+    }
+
   }
 }

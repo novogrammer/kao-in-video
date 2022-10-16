@@ -18,6 +18,27 @@ body{
     display:none;
   }
 }
+.c-button{
+  display: inline-block;
+  color: #000;
+  border: 1px solid;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  font-size: 4vmin;
+  line-height: 6vmin;
+  padding: 1vmin 2vmin;
+  cursor: pointer;
+
+  img{
+    width: auto;
+    height: 6vmin;
+    vertical-align: bottom;
+    margin-right: 1vmin;
+
+  }
+}
+
 
 .p-app{
   &__webcam{
@@ -32,5 +53,10 @@ body{
     position:absolute;
     width:100vw;
     height:math.div(100vw * 720 , 1280);
+  }
+  &__ui{
+    position:fixed;
+    right:0;
+    bottom:0;
   }
 }
