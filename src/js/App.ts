@@ -29,10 +29,10 @@ interface VideoParams{
 
 const videoParamsList:VideoParams[]=[
   {
-    url:`${window.relRoot}movie/kari.mp4`,
+    url:`${window.relRoot}assets/movie/kari.mp4`,
   },
   {
-    url:`${window.relRoot}movie/kari2.mp4`,
+    url:`${window.relRoot}assets/movie/kari2.mp4`,
   },
 ];
 

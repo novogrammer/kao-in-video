@@ -52,8 +52,8 @@ const config = {
                     to:`lib/@mediapipe/face_mesh`,
                 },
                 {
-                    from:"src/movie",
-                    to:`movie`,
+                    from:"src/assets",
+                    to:`assets`,
                 },
             ]
         }),

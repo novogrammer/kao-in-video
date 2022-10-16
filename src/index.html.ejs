@@ -2,7 +2,38 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>Webpack App</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>TODO: title</title>
+        <meta
+          name="description"
+          content="TODO: description"
+        />
+        <meta property="og:locale" content="ja_JP" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="TODO: title" />
+        <meta
+          property="og:image"
+          content="https://novogrammer.github.io/kao-in-video/assets/img/ogp.jpg"
+        />
+        <meta
+          property="og:url"
+          content="https://novogrammer.github.io/kao-in-video/"
+        />
+        <meta property="og:site_name" content="novogrammer" />
+        <link
+          rel="canonical"
+          href="https://novogrammer.github.io/kao-in-video/"
+        />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@novogrammer" />
+        <meta
+          name="twitter:image"
+          content="https://novogrammer.github.io/kao-in-video/assets/img/ogp.jpg"
+        />
+        <meta
+          name="twitter:description"
+          content="TODO: description"
+        />
         <script>
             window.relRoot="<%= relRoot %>";
         </script>
@@ -12,8 +43,11 @@
             <canvas class="p-app__view"></canvas>
             <video class="p-app__webcam"></video>
             <canvas class="p-app__debug-view"></canvas>
+            <div class="p-app__ui">
+
+                <a href="./recorder/">recorder/index.html</a>
+            </div>
         </div>
-        <a href="./recorder/">recorder/index.html</a>
         <div class="c-start">START!</div>
     </body>
     
