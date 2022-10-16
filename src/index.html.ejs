@@ -1,16 +1,20 @@
+<%
+const title=`顔 in Video`;
+const description=`映像の中で自分の顔がはめ込まれた人が、自分の意思と無関係に動く気持ち悪さを体験するコンテンツです。`;
+%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>TODO: title</title>
+        <title><%= title %></title>
         <meta
           name="description"
-          content="TODO: description"
+          content="<%= description %>"
         />
         <meta property="og:locale" content="ja_JP" />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="TODO: title" />
+        <meta property="og:title" content="<%= title %>" />
         <meta
           property="og:image"
           content="https://novogrammer.github.io/kao-in-video/assets/img/ogp.jpg"
@@ -32,7 +36,7 @@
         />
         <meta
           name="twitter:description"
-          content="TODO: description"
+          content="<%= description %>"
         />
         <script>
             window.relRoot="<%= relRoot %>";
