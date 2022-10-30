@@ -8,7 +8,7 @@ import * as faceMesh from "@mediapipe/face_mesh";
 import "../css/style.scss";
 import { Face } from "@tensorflow-models/face-landmarks-detection";
 import Player from "./Player";
-import { IS_PRODUCTION, IS_REFINE_LANDMARKS, WEBCAM_HEIGHT, WEBCAM_WIDTH } from "./constants";
+import { IS_PRODUCTION, IS_REFINE_LANDMARKS, VIDEO_PARAMS_LIST, WEBCAM_HEIGHT, WEBCAM_WIDTH } from "./constants";
 
 import Stats from "stats.js";
 import { drawFace } from "./face_utils";
@@ -22,19 +22,6 @@ console.log(`faceMesh.VERSION: ${faceMesh.VERSION}`);
 
 console.log(`faceLandmarksDetection:`, faceLandmarksDetection);
 
-
-interface VideoParams{
-  url:string,
-}
-
-const videoParamsList:VideoParams[]=[
-  {
-    url:`${window.relRoot}assets/movie/kari.mp4`,
-  },
-  {
-    url:`${window.relRoot}assets/movie/kari2.mp4`,
-  },
-];
 
 
 
@@ -61,9 +48,9 @@ export default class App{
     this.updateVideo(0);
   }
   updateVideo(index:number){
-    if(index<videoParamsList.length){
+    if(index<VIDEO_PARAMS_LIST.length){
       this.currentVideoIndex=index;
-      this.player=new Player(this.webcam,this.canvas,this.onPlayerEnded.bind(this),videoParamsList[this.currentVideoIndex]);
+      this.player=new Player(this.webcam,this.canvas,this.onPlayerEnded.bind(this),VIDEO_PARAMS_LIST[this.currentVideoIndex]);
     }
   }
   setupStats(){
@@ -208,7 +195,7 @@ export default class App{
   onPlayerEnded(){
     console.log("onPlayerEnded");
 
-    const nextVideoIndex=(this.currentVideoIndex+1)%videoParamsList.length;
+    const nextVideoIndex=(this.currentVideoIndex+1)%VIDEO_PARAMS_LIST.length;
     this.updateVideo(nextVideoIndex);
   }
   onKeyDown(event: KeyboardEvent){
