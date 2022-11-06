@@ -126,8 +126,9 @@ export default class Player{
     const height = this.canvas.height;
     const positionList=[];
     for(let keypoint of face.keypoints){
-      positionList.push(keypoint.x,height - keypoint.y,keypoint.z);
+      positionList.push(keypoint.x,height - keypoint.y,keypoint.z * -1);
     }
+    // console.log(face.keypoints);
 
     geometry.setAttribute("position",new THREE.Float32BufferAttribute(positionList,3));
     geometry.getAttribute("position").needsUpdate=true;
