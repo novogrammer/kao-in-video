@@ -106,6 +106,12 @@ export default class Player{
     renderer.outputEncoding=THREE.sRGBEncoding;
     const scene=new THREE.Scene();
 
+    {
+      const hemisphereLight = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
+      scene.add(hemisphereLight);
+       
+    }
+
     const width=this.canvas.width;
     const height=this.canvas.height;
     {
