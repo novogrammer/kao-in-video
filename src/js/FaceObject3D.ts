@@ -29,7 +29,15 @@ export class FaceObject3D extends THREE.Group{
   }
   createFaceMesh(){
     const geometry=new THREE.BufferGeometry();
-    geometry.setIndex(FACE_INDEX_LIST);
+    const faceWithoutLipIndexList=[];
+    for(let i=0;i<FACE_INDEX_LIST.length;i+=3){
+      const triangle=[FACE_INDEX_LIST[i+0],FACE_INDEX_LIST[i+1],FACE_INDEX_LIST[i+2]];
+      const isLipTriangle=triangle.every((triangleIndex)=>faceMesh.FACEMESH_LIPS.some((landmarkConnection:[number, number])=>landmarkConnection.some((index)=>index==triangleIndex)));
+      if(!isLipTriangle){
+        faceWithoutLipIndexList.push(...triangle);
+      }
+    }
+    geometry.setIndex(faceWithoutLipIndexList);
     const positionList=[];
     for(let i=0;i<NUM_KEYPOINTS;++i){
       positionList.push(0,0,0);
