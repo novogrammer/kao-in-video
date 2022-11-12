@@ -83,9 +83,9 @@ export class FaceObject3D extends THREE.Group{
   createPlaceholderFaceMesh(){
     const material=new THREE.MeshStandardMaterial({
       // side:THREE.DoubleSide,
-      metalness:0.0,
-      roughness:0.0,
-      color:0xffffff,
+      metalness:0.5,
+      roughness:0.2,
+      color:0xb8deff,
     });
     const mesh=this.createFaceMesh(material);
     return mesh;
