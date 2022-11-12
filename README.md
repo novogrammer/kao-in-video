@@ -1,5 +1,8 @@
 # 顔 in Video
 
+「映像の中に自分の顔がある。」
+自分の意思と無関係に動く気持ち悪さを体験するコンテンツです。
+
 Demo
 https://novogrammer.github.io/kao-in-video/
 
