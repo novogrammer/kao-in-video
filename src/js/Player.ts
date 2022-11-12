@@ -90,9 +90,12 @@ export default class Player{
       const sourceFace=sourceFaceList[0];
       for(let faceObject3D of faceObject3DList){
         faceObject3D.updateFaceMaterial(sourceFace);
+        faceObject3D.isReal=true;
       }
     }else{
-      // TODO: 一つもない時
+      for(let faceObject3D of faceObject3DList){
+        faceObject3D.isReal=false;
+      }
     }
 
   }

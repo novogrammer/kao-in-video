@@ -21,13 +21,18 @@ export class FaceObject3D extends THREE.Group{
   
     }
     {
-      const faceMesh=this.createFaceMesh();
-      this.add(faceMesh);
-      this.userData.faceMesh=faceMesh;
+      const realFaceMesh=this.createRealFaceMesh();
+      this.add(realFaceMesh);
+      this.userData.realFaceMesh=realFaceMesh;
     }
-
+    {
+      const placeHolderFaceMesh=this.createPlaceholderFaceMesh();
+      this.add(placeHolderFaceMesh);
+      this.userData.placeHolderFaceMesh=placeHolderFaceMesh;
+    }
+    this.isReal=false;
   }
-  createFaceMesh(){
+  createFaceMesh(material:THREE.Material){
     const geometry=new THREE.BufferGeometry();
     const faceWithoutLipIndexList=[];
     for(let i=0;i<FACE_INDEX_LIST.length;i+=3){
@@ -50,6 +55,20 @@ export class FaceObject3D extends THREE.Group{
     }
     geometry.setAttribute("uv",new THREE.Float32BufferAttribute(uvList,2));
 
+    const mesh=new THREE.Mesh(geometry,material);
+    mesh.frustumCulled = false;
+
+    return mesh;
+  }
+  createRealFaceMesh(){
+    const material=new THREE.MeshBasicMaterial({
+      // side:THREE.DoubleSide,
+      // color:0xff00ff,
+      transparent:true,
+      vertexColors:true,
+    });
+    const mesh=this.createFaceMesh(material);
+    const {geometry}=mesh;
     const colorList=[];
     for(let i=0;i<NUM_KEYPOINTS;++i){
       if(faceMesh.FACEMESH_FACE_OVAL.some((landmarkConnection:[number, number])=>landmarkConnection.some((index)=>index==i))){
@@ -59,37 +78,39 @@ export class FaceObject3D extends THREE.Group{
       }
     }
     geometry.setAttribute("color",new THREE.Float32BufferAttribute(colorList,4));
-
-
-    const material=new THREE.MeshBasicMaterial({
-      // side:THREE.DoubleSide,
-      // color:0xff00ff,
-      transparent:true,
-      vertexColors:true,
-    });
-    const mesh=new THREE.Mesh(geometry,material);
-    mesh.frustumCulled = false;
-
     return mesh;
   }
-  updateFaceGeometry(face:faceLandmarksDetection.Face,height:number){
-    const {faceMesh}=this.userData;
-    const {geometry} = faceMesh;
-    const positionList=[];
-    for(let keypoint of face.keypoints){
-      positionList.push(keypoint.x,height - keypoint.y,keypoint.z * -1);
-    }
-    // console.log(face.keypoints);
+  createPlaceholderFaceMesh(){
+    const material=new THREE.MeshBasicMaterial({
+      // side:THREE.DoubleSide,
+      color:0xff00ff,
+    });
+    const mesh=this.createFaceMesh(material);
+    return mesh;
+  }
 
-    geometry.setAttribute("position",new THREE.Float32BufferAttribute(positionList,3));
-    geometry.getAttribute("position").needsUpdate=true;
-    geometry.computeVertexNormals();
+  updateFaceGeometry(face:faceLandmarksDetection.Face,height:number){
+    const {realFaceMesh,placeHolderFaceMesh}=this.userData;
+    const faceMeshList=[realFaceMesh,placeHolderFaceMesh];
+    for(let faceMesh of faceMeshList){
+      const {geometry} = faceMesh;
+      const positionList=[];
+      for(let keypoint of face.keypoints){
+        positionList.push(keypoint.x,height - keypoint.y,keypoint.z * -1);
+      }
+      // console.log(face.keypoints);
+  
+      geometry.setAttribute("position",new THREE.Float32BufferAttribute(positionList,3));
+      geometry.getAttribute("position").needsUpdate=true;
+      geometry.computeVertexNormals();
+  
+    }
 
   }
   updateFaceMaterial(sourceFace:faceLandmarksDetection.Face){
-    const faceMesh=this.userData.faceMesh;
-    const geometry=faceMesh.geometry;
-    const material=faceMesh.material as THREE.MeshBasicMaterial;
+    const {realFaceMesh}=this.userData;
+    const geometry=realFaceMesh.geometry;
+    const material=realFaceMesh.material as THREE.MeshBasicMaterial;
 
     const {sourceVideoTexture}=this.userData;
 
@@ -107,5 +128,15 @@ export class FaceObject3D extends THREE.Group{
     material.needsUpdate=true;
 
   }
+  get isReal():boolean{
+    return this.userData.isReal;
+  }
+  set isReal(isReal:boolean){
+    this.userData.isReal=isReal;
+    const {realFaceMesh,placeHolderFaceMesh}=this.userData;
+    realFaceMesh.visible=isReal;
+    placeHolderFaceMesh.visible=!isReal;
+  }
+  
 
 }
