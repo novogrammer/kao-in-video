@@ -111,6 +111,15 @@ export default class Player{
       scene.add(hemisphereLight);
        
     }
+    {
+      const cubeTextureLoader = new THREE.CubeTextureLoader();
+      cubeTextureLoader.setPath( 'assets/textures/cube/Bridge2/' );
+  
+      const textureCube = cubeTextureLoader.load( [ 'posx.jpg', 'negx.jpg', 'posy.jpg', 'negy.jpg', 'posz.jpg', 'negz.jpg' ] );
+      textureCube.encoding = THREE.sRGBEncoding;
+      // scene.background = textureCube;
+      scene.environment=textureCube;
+    }
 
     const width=this.canvas.width;
     const height=this.canvas.height;
