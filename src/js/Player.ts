@@ -56,6 +56,9 @@ export default class Player{
     this.loadAsync().then(async ()=>{
       this.setupThreePromise=this.setupThreeAsync();
       await this.setupThreePromise;
+      this.video.addEventListener("playing",()=>{
+        this.isPlaying=true;
+      });
       this.play();
     });
   }
@@ -194,11 +197,9 @@ export default class Player{
   play(){
     this.video.load();
     this.video.play();
-    this.isPlaying=true;
   }
   stop(){
     this.video.pause();
-    this.isPlaying=false;
   }
 
   async onTickAsync() {
@@ -208,8 +209,8 @@ export default class Player{
       console.log("this.three is null");
       return;
     }
-    if(isNaN(this.video.duration)){
-      console.log("isNaN(this.video.duration)");
+    if(!this.isPlaying){
+      console.log("!this.isPlaying");
       return;
     }
     const {scene,camera,faceObject3DList}=this.three;
