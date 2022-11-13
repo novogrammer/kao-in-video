@@ -19,7 +19,6 @@ interface PlayerOptions{
 }
 
 interface ThreeObjects{
-  renderer:THREE.WebGLRenderer;
   scene:THREE.Scene;
   camera:THREE.OrthographicCamera;
   faceObject3DList:FaceObject3D[];
@@ -35,7 +34,9 @@ export default class Player{
   three:ThreeObjects|null=null;
   setupThreePromise:Promise<void>|null=null;
   isPlaying:boolean=false;
-  constructor(sourceVideo:HTMLVideoElement,destinationCanvas:HTMLCanvasElement,onEndedCallback:()=>void,options:PlayerOptions){
+  renderer:THREE.WebGLRenderer;
+  constructor(renderer:THREE.WebGLRenderer,sourceVideo:HTMLVideoElement,destinationCanvas:HTMLCanvasElement,onEndedCallback:()=>void,options:PlayerOptions){
+    this.renderer=renderer;
     this.video=document.createElement("video");
     this.video.playsInline=true;
     this.video.muted=true;
@@ -82,8 +83,6 @@ export default class Player{
     {
       throw new Error("result.video is null");
     }
-    this.canvas.width=result.video.width;
-    this.canvas.height=result.video.height;
 
     this.video.src=mp4Url;
 
@@ -109,10 +108,6 @@ export default class Player{
 
   }
   async setupThreeAsync(){
-    const renderer=new THREE.WebGLRenderer({
-      canvas:this.canvas,
-    });
-    renderer.outputEncoding=THREE.sRGBEncoding;
     const scene=new THREE.Scene();
 
     {
@@ -166,7 +161,6 @@ export default class Player{
 
 
     this.three={
-      renderer,
       scene,
       camera,
       faceObject3DList: faceObject3DList,
@@ -180,7 +174,7 @@ export default class Player{
     const {three}=this;
     if(three){
       this.three=null;
-      const {renderer,scene,faceObject3DList}=three;
+      const {scene,faceObject3DList}=three;
       scene.traverse((object3D)=>{
         if(object3D instanceof THREE.Mesh){
           const mesh:THREE.Mesh = object3D;
@@ -194,7 +188,6 @@ export default class Player{
       for(let faceObject3D of faceObject3DList){
         faceObject3D.destroy();
       }
-      renderer.dispose();
     }
   }
 
@@ -219,7 +212,8 @@ export default class Player{
       console.log("isNaN(this.video.duration)");
       return;
     }
-    const {renderer,scene,camera,faceObject3DList}=this.three;
+    const {scene,camera,faceObject3DList}=this.three;
+    const {renderer}=this;
 
     const currentIndex=Math.floor(this.facesList.length*this.video.currentTime/this.video.duration);
     if(currentIndex<this.facesList.length){

@@ -1,6 +1,10 @@
 export const WEBCAM_WIDTH=256;
 export const WEBCAM_HEIGHT=256;
 
+export const VIDEO_WIDTH=1280;
+export const VIDEO_HEIGHT=720;
+
+
 export const RECORD_MAX_FACES = 4;
 
 export const IS_REFINE_LANDMARKS = false;

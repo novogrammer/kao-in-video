@@ -8,7 +8,7 @@ import * as faceMesh from "@mediapipe/face_mesh";
 import "../css/style.scss";
 import { Face } from "@tensorflow-models/face-landmarks-detection";
 import Player from "./Player";
-import { IS_PRODUCTION, IS_REFINE_LANDMARKS, VIDEO_PARAMS_LIST, WEBCAM_HEIGHT, WEBCAM_WIDTH } from "./constants";
+import { IS_PRODUCTION, IS_REFINE_LANDMARKS, VIDEO_HEIGHT, VIDEO_PARAMS_LIST, VIDEO_WIDTH, WEBCAM_HEIGHT, WEBCAM_WIDTH } from "./constants";
 
 import Stats from "stats.js";
 import { drawFace } from "./face_utils";
@@ -21,6 +21,8 @@ console.log(`faceMesh`,faceMesh);
 console.log(`faceMesh.VERSION: ${faceMesh.VERSION}`);
 
 console.log(`faceLandmarksDetection:`, faceLandmarksDetection);
+
+import * as THREE from "three";
 
 
 
@@ -37,12 +39,23 @@ export default class App{
   handleVideoFrameCallback:number|null=null;
   stats:Stats|null=null;
   isDebug:boolean=!IS_PRODUCTION;
+  renderer:THREE.WebGLRenderer;
 
   constructor(){
     this.webcam=document.querySelector(".p-app__webcam");
     this.debugCanvas=document.querySelector(".p-app__debug-view");
     this.debugContext2d=this.debugCanvas.getContext("2d");
     this.canvas=document.querySelector(".p-app__view");
+
+    {
+      this.canvas.width=VIDEO_WIDTH;
+      this.canvas.height=VIDEO_HEIGHT;
+      const renderer=new THREE.WebGLRenderer({
+        canvas:this.canvas,
+      });
+      renderer.outputEncoding=THREE.sRGBEncoding;
+      this.renderer=renderer;
+    }
 
     this.setupPromise=this.setupAsync();
     this.updateVideo(0);
@@ -52,7 +65,7 @@ export default class App{
       console.log(`updateVideo(${index})`);
       this.currentVideoIndex=index;
       const previousPlayer=this.player;
-      this.player=new Player(this.webcam,this.canvas,this.onPlayerEnded.bind(this),VIDEO_PARAMS_LIST[this.currentVideoIndex]);
+      this.player=new Player(this.renderer,this.webcam,this.canvas,this.onPlayerEnded.bind(this),VIDEO_PARAMS_LIST[this.currentVideoIndex]);
       if(previousPlayer){
         previousPlayer.destroy();
       }
