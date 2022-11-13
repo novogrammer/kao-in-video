@@ -51,7 +51,11 @@ export default class App{
     if(index<VIDEO_PARAMS_LIST.length){
       console.log(`updateVideo(${index})`);
       this.currentVideoIndex=index;
+      const previousPlayer=this.player;
       this.player=new Player(this.webcam,this.canvas,this.onPlayerEnded.bind(this),VIDEO_PARAMS_LIST[this.currentVideoIndex]);
+      if(previousPlayer){
+        previousPlayer.destroy();
+      }
     }
   }
   setupStats(){
