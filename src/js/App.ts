@@ -36,7 +36,6 @@ export default class App{
   detector:faceLandmarksDetection.FaceLandmarksDetector|null=null;
   player:Player|null=null;
   currentVideoIndex:number=0;
-  handleVideoFrameCallback:number|null=null;
   stats:Stats|null=null;
   isDebug:boolean=!IS_PRODUCTION;
   renderer:THREE.WebGLRenderer;
@@ -143,11 +142,23 @@ export default class App{
       throw new Error("no requestVideoFrameCallback");
     }
 
-    if(this.handleVideoFrameCallback!=null){
-      this.webcam.cancelVideoFrameCallback(this.handleVideoFrameCallback);
-      this.handleVideoFrameCallback=null;
-    }
-    this.handleVideoFrameCallback=this.webcam.requestVideoFrameCallback(this.onRequestVideoFrame.bind(this));
+    let onTickPromise:Promise<void>|null=null;
+    this.renderer.setAnimationLoop((time:number,frame:XRFrame)=>{
+
+      const previousOnTickPromise=onTickPromise;
+      onTickPromise=(async ()=>{
+        await previousOnTickPromise;
+        if(!this.stats){
+          throw new Error("this.stats is null");
+        }
+          this.stats.begin();
+        await this.onTickAsync();
+        this.stats.end();
+  
+      })();
+  
+  
+    });
 
     const fullscreenElement=document.querySelector(".c-button--fullscreen") as HTMLElement;
     fullscreenElement.addEventListener("click",()=>{
@@ -183,17 +194,6 @@ export default class App{
     await this.setupDetectorAsync();
     await this.setupVideoAsync();
     this.setupEvents();
-  }
-  async onRequestVideoFrame(now: DOMHighResTimeStamp, metadata: VideoFrameMetadata) {
-    if(!this.stats){
-      throw new Error("this.stats is null");
-    }
-
-    this.handleVideoFrameCallback=this.webcam.requestVideoFrameCallback(this.onRequestVideoFrame.bind(this));
-
-    this.stats.begin();
-    await this.onTickAsync();
-    this.stats.end();
   }
   async onTickAsync(){
     if(!this.webcam.srcObject){
