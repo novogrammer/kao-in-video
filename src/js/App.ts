@@ -138,9 +138,6 @@ export default class App{
     //   requestAnimationFrame(animateAsync);
     // }
     // animateAsync();
-    if(!("requestVideoFrameCallback" in this.webcam)){
-      throw new Error("no requestVideoFrameCallback");
-    }
 
     let onTickPromise:Promise<void>|null=null;
     this.renderer.setAnimationLoop((time:number,frame:XRFrame)=>{
