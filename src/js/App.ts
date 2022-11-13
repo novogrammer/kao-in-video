@@ -49,6 +49,7 @@ export default class App{
   }
   updateVideo(index:number){
     if(index<VIDEO_PARAMS_LIST.length){
+      console.log(`updateVideo(${index})`);
       this.currentVideoIndex=index;
       this.player=new Player(this.webcam,this.canvas,this.onPlayerEnded.bind(this),VIDEO_PARAMS_LIST[this.currentVideoIndex]);
     }
