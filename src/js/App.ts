@@ -145,6 +145,19 @@ export default class App{
     const uiElement=document.querySelector(".p-app__ui") as HTMLElement;
     uiElement.style.display="block";
 
+    this.canvas.addEventListener("webglcontextlost",()=>{
+      console.log("this.canvas webglcontextlost");
+    });
+    this.canvas.addEventListener("webglcontextrestored",()=>{
+      console.log("this.canvas webglcontextrestored");
+    });
+    this.debugCanvas.addEventListener("webglcontextlost",()=>{
+      console.log("this.debugCanvas webglcontextlost");
+    });
+    this.debugCanvas.addEventListener("webglcontextrestored",()=>{
+      console.log("this.debugCanvas webglcontextrestored");
+    });
+
   }
   async setupAsync(){
     this.setupStats();
