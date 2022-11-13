@@ -194,6 +194,7 @@ export default class Player{
       for(let faceObject3D of faceObject3DList){
         faceObject3D.destroy();
       }
+      renderer.dispose();
     }
   }
 
