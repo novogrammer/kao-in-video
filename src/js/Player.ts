@@ -186,7 +186,11 @@ export default class Player{
           const mesh:THREE.Mesh = object3D;
           disposeMesh(mesh);
         }
-      })
+      });
+      const {environment}=scene;
+      if(environment){
+        environment.dispose();
+      }
       for(let faceObject3D of faceObject3DList){
         faceObject3D.destroy();
       }
