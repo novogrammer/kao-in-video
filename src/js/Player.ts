@@ -28,13 +28,13 @@ interface ThreeObjects{
 export default class Player{
   video:HTMLVideoElement;
   canvas:HTMLCanvasElement;
-  handleVideoFrameCallback:number|null=null;
   facesList: faceLandmarksDetection.Face[][];
   sourceVideo: HTMLVideoElement;
   onEndedCallback:()=>void;
   options: PlayerOptions;
   three:ThreeObjects|null=null;
   setupThreePromise:Promise<void>|null=null;
+  isPlaying:boolean=false;
   constructor(sourceVideo:HTMLVideoElement,destinationCanvas:HTMLCanvasElement,onEndedCallback:()=>void,options:PlayerOptions){
     this.video=document.createElement("video");
     this.video.playsInline=true;
@@ -201,37 +201,25 @@ export default class Player{
   play(){
     this.video.load();
     this.video.play();
-    if(!("requestVideoFrameCallback" in this.video)){
-      throw new Error("no requestVideoFrameCallback");
-    }
-    if(this.handleVideoFrameCallback!=null){
-      this.video.cancelVideoFrameCallback(this.handleVideoFrameCallback);
-      this.handleVideoFrameCallback=null;
-    }
-    this.handleVideoFrameCallback=this.video.requestVideoFrameCallback(this.onRequestVideoFrame.bind(this));
+    this.isPlaying=true;
   }
   stop(){
     this.video.pause();
-    if(!("requestVideoFrameCallback" in this.video)){
-      throw new Error("no requestVideoFrameCallback");
-    }
-    if(this.handleVideoFrameCallback!=null){
-      this.video.cancelVideoFrameCallback(this.handleVideoFrameCallback);
-      this.handleVideoFrameCallback=null;
-    }
-
+    this.isPlaying=false;
   }
 
-  async onRequestVideoFrame(now: DOMHighResTimeStamp, metadata: VideoFrameMetadata) {
-    this.handleVideoFrameCallback=this.video.requestVideoFrameCallback(this.onRequestVideoFrame.bind(this));
+  async onTickAsync() {
 
     // this.context2d.drawImage(this.video, 0, 0);
     if(!this.three){
-      throw new Error("this.three is null");
+      console.log("this.three is null");
+      return;
+    }
+    if(isNaN(this.video.duration)){
+      console.log("isNaN(this.video.duration)");
+      return;
     }
     const {renderer,scene,camera,faceObject3DList}=this.three;
-    renderer.render(scene,camera);
-    
 
     const currentIndex=Math.floor(this.facesList.length*this.video.currentTime/this.video.duration);
     if(currentIndex<this.facesList.length){
@@ -248,16 +236,14 @@ export default class Player{
   
       }
     }else{
-      console.error(`out of bounds ${currentIndex}/${this.facesList.length}`)
+      console.log(`out of bounds ${currentIndex}/${this.facesList.length}`)
     }
+    renderer.render(scene,camera);
 
   }
   onEnded(event:Event){
     console.log("onEnded");
-    if(this.handleVideoFrameCallback!=null){
-      this.video.cancelVideoFrameCallback(this.handleVideoFrameCallback);
-      this.handleVideoFrameCallback=null;
-    }
+    this.isPlaying=false;
     if(this.onEndedCallback){
       this.onEndedCallback();
     }

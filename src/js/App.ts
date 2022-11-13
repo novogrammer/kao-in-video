@@ -202,6 +202,8 @@ export default class App{
           drawFace(this.debugContext2d,face);
         }
         this.player.updateFaceMaterialList(faces);
+
+        await this.player.onTickAsync();
         
       }catch(error){
         this.detector.dispose();
