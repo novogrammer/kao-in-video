@@ -12,6 +12,7 @@ import axios from "axios";
 import * as THREE from "three";
 import { RECORD_MAX_FACES } from './constants';
 import { FaceObject3D } from './FaceObject3D';
+import { disposeMesh } from './three_utils';
 
 interface PlayerOptions{
   url:string;
@@ -33,6 +34,7 @@ export default class Player{
   onEndedCallback:()=>void;
   options: PlayerOptions;
   three:ThreeObjects|null=null;
+  setupThreePromise:Promise<void>|null=null;
   constructor(sourceVideo:HTMLVideoElement,destinationCanvas:HTMLCanvasElement,onEndedCallback:()=>void,options:PlayerOptions){
     this.video=document.createElement("video");
     this.video.playsInline=true;
@@ -46,13 +48,20 @@ export default class Player{
 
     this.video.addEventListener("ended",this.onEnded.bind(this));
 
+    this.setup();
 
+  }
+  setup(){
     this.loadAsync().then(async ()=>{
-      await this.setupThreeAsync();
+      this.setupThreePromise=this.setupThreeAsync();
+      await this.setupThreePromise;
       this.play();
-    })
-
-    
+    });
+  }
+  destroy(){
+    this.stop();
+    // awaitしない
+    this.destroyThreeAsync();
   }
   async loadAsync(){
     const mp4Url=this.options.url;
@@ -164,6 +173,25 @@ export default class Player{
     };
     
   }
+  async destroyThreeAsync(){
+    if(this.setupThreePromise){
+      await this.setupThreePromise;
+    }
+    const {three}=this;
+    if(three){
+      this.three=null;
+      const {renderer,scene,faceObject3DList}=three;
+      scene.traverse((object3D)=>{
+        if(object3D instanceof THREE.Mesh){
+          const mesh:THREE.Mesh = object3D;
+          disposeMesh(mesh);
+        }
+      })
+      for(let faceObject3D of faceObject3DList){
+        faceObject3D.destroy();
+      }
+    }
+  }
 
   play(){
     this.video.load();
@@ -176,6 +204,17 @@ export default class Player{
       this.handleVideoFrameCallback=null;
     }
     this.handleVideoFrameCallback=this.video.requestVideoFrameCallback(this.onRequestVideoFrame.bind(this));
+  }
+  stop(){
+    this.video.pause();
+    if(!("requestVideoFrameCallback" in this.video)){
+      throw new Error("no requestVideoFrameCallback");
+    }
+    if(this.handleVideoFrameCallback!=null){
+      this.video.cancelVideoFrameCallback(this.handleVideoFrameCallback);
+      this.handleVideoFrameCallback=null;
+    }
+
   }
 
   async onRequestVideoFrame(now: DOMHighResTimeStamp, metadata: VideoFrameMetadata) {

@@ -3,6 +3,7 @@ import { FACE_INDEX_LIST, NUM_KEYPOINTS } from './face_constants';
 import { WEBCAM_HEIGHT, WEBCAM_WIDTH } from './constants';
 import * as faceMesh from "@mediapipe/face_mesh";
 import * as faceLandmarksDetection from "@tensorflow-models/face-landmarks-detection";
+import { disposeMesh } from "./three_utils";
 
 
 interface FaceObject3DOptions{
@@ -31,6 +32,18 @@ export class FaceObject3D extends THREE.Group{
       this.userData.placeHolderFaceMesh=placeHolderFaceMesh;
     }
     this.isReal=false;
+  }
+  destroy(){
+    const {realFaceMesh,placeHolderFaceMesh,sourceVideoTexture}=this.userData;
+    if(realFaceMesh){
+      disposeMesh(realFaceMesh);
+    }
+    if(placeHolderFaceMesh){
+      disposeMesh(placeHolderFaceMesh);
+    }
+    if(sourceVideoTexture){
+      sourceVideoTexture.dispose();
+    }
   }
   createFaceMesh(material:THREE.Material){
     const geometry=new THREE.BufferGeometry();
