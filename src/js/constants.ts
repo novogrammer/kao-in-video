@@ -1,5 +1,9 @@
-export const WEBCAM_WIDTH=256;
-export const WEBCAM_HEIGHT=256;
+// export const WEBCAM_WIDTH=256;
+// export const WEBCAM_HEIGHT=256;
+
+export const WEBCAM_WIDTH=512;
+export const WEBCAM_HEIGHT=512;
+
 
 export const VIDEO_WIDTH=1280;
 export const VIDEO_HEIGHT=720;

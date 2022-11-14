@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { FACE_INDEX_LIST, NUM_KEYPOINTS } from './face_constants';
-import { WEBCAM_HEIGHT, WEBCAM_WIDTH } from './constants';
+import { VIDEO_HEIGHT, VIDEO_WIDTH, WEBCAM_HEIGHT, WEBCAM_WIDTH } from './constants';
 import * as faceMesh from "@mediapipe/face_mesh";
 import * as faceLandmarksDetection from "@tensorflow-models/face-landmarks-detection";
 import { disposeMesh } from "./three_utils";
@@ -123,17 +123,19 @@ export class FaceObject3D extends THREE.Group{
 
   }
   updateFaceMaterial(sourceFace:faceLandmarksDetection.Face){
-    const {realFaceMesh}=this.userData;
+    const {realFaceMesh,options}=this.userData;
     const geometry=realFaceMesh.geometry;
     const material=realFaceMesh.material as THREE.MeshBasicMaterial;
 
     const {sourceVideoTexture}=this.userData;
 
+    const w=options.sourceVideo.videoWidth!=0?options.sourceVideo.videoWidth:VIDEO_WIDTH;
+    const h=options.sourceVideo.videoHeight!=0?options.sourceVideo.videoHeight:VIDEO_HEIGHT;
     const uvList=[];
     for(let keypoint of sourceFace.keypoints){
       uvList.push(
-        keypoint.x/WEBCAM_WIDTH,
-        1 - (keypoint.y/WEBCAM_HEIGHT),
+        keypoint.x/w,
+        1 - (keypoint.y/h),
       );
     }
     geometry.setAttribute("uv",new THREE.Float32BufferAttribute(uvList,2));

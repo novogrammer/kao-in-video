@@ -45,14 +45,14 @@ body{
   &__webcam{
     display:none;
     width:25vw;
-    height:25vw;
+    height:auto;
   }
   &__debug-view{
     position:absolute;
     left:0;
     top:0;
     width:25vw;
-    height:25vw;
+    height:auto;
   }
   &__view{
     position:absolute;
