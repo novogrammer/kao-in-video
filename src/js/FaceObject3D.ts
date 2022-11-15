@@ -115,8 +115,9 @@ export class FaceObject3D extends THREE.Group{
       }
       // console.log(face.keypoints);
   
-      geometry.setAttribute("position",new THREE.Float32BufferAttribute(positionList,3));
-      geometry.getAttribute("position").needsUpdate=true;
+      const attributePosition = geometry.getAttribute("position");
+      attributePosition.set(positionList);
+      attributePosition.needsUpdate=true;
       geometry.computeVertexNormals();
   
     }
@@ -138,8 +139,9 @@ export class FaceObject3D extends THREE.Group{
         1 - (keypoint.y/h),
       );
     }
-    geometry.setAttribute("uv",new THREE.Float32BufferAttribute(uvList,2));
-    geometry.getAttribute("uv").needsUpdate=true;
+    const attributeUv=geometry.getAttribute("uv");
+    attributeUv.set(uvList);
+    attributeUv.needsUpdate=true;
 
     material.map=sourceVideoTexture;
     material.needsUpdate=true;
