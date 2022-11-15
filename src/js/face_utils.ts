@@ -16,22 +16,24 @@ export function drawFace(context2d:CanvasRenderingContext2D,face:Face){
   }
   context2d.stroke();
 
-  if(NUM_KEYPOINTS_WITH_IRISES<=face.keypoints.length){
-    context2d.strokeStyle="#ff0";
-    context2d.beginPath();
-    for(let [fromIndex,toIndex] of faceMesh.FACEMESH_LEFT_IRIS){
-      const from=face.keypoints[fromIndex];
-      const to=face.keypoints[toIndex];
-      context2d.moveTo(from.x,from.y);
-      context2d.lineTo(to.x,to.y);
-    }
-    for(let [fromIndex,toIndex] of faceMesh.FACEMESH_RIGHT_IRIS){
-      const from=face.keypoints[fromIndex];
-      const to=face.keypoints[toIndex];
-      context2d.moveTo(from.x,from.y);
-      context2d.lineTo(to.x,to.y);
-    }
-    context2d.stroke();
+  // メモリリーク対策のために、バージョンを下げた。
+  // if(NUM_KEYPOINTS_WITH_IRISES<=face.keypoints.length){
+  //   context2d.strokeStyle="#ff0";
+  //   context2d.beginPath();
+  //   for(let [fromIndex,toIndex] of faceMesh.FACEMESH_LEFT_IRIS){
+  //     const from=face.keypoints[fromIndex];
+  //     const to=face.keypoints[toIndex];
+  //     context2d.moveTo(from.x,from.y);
+  //     context2d.lineTo(to.x,to.y);
+  //   }
+  //   for(let [fromIndex,toIndex] of faceMesh.FACEMESH_RIGHT_IRIS){
+  //     const from=face.keypoints[fromIndex];
+  //     const to=face.keypoints[toIndex];
+  //     context2d.moveTo(from.x,from.y);
+  //     context2d.lineTo(to.x,to.y);
+  //   }
+  //   context2d.stroke();
 
-  }
+  // }
+  context2d.restore();
 }

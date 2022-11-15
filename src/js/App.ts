@@ -18,7 +18,7 @@ setWasmPaths(`${window.relRoot}lib/@tensorflow/tfjs-backend-wasm@${version_wasm}
 console.log(`version_wasm: ${version_wasm}`);
 
 console.log(`faceMesh`,faceMesh);
-console.log(`faceMesh.VERSION: ${faceMesh.VERSION}`);
+// console.log(`faceMesh.VERSION: ${faceMesh.VERSION}`);
 
 console.log(`faceLandmarksDetection:`, faceLandmarksDetection);
 
@@ -208,10 +208,15 @@ export default class App{
         faces = await this.detector.estimateFaces(this.webcam,{
           flipHorizontal: false,
         });
-        for(let face of faces){
-          drawFace(this.debugContext2d,face);
+        if(faces){
+
+          for(let face of faces){
+            drawFace(this.debugContext2d,face);
+          }
+          this.player.updateFaceMaterialList(faces);
+        }else{
+          console.log("faces is null");
         }
-        this.player.updateFaceMaterialList(faces);
 
         await this.player.onTickAsync();
         
