@@ -23,6 +23,7 @@ console.log(`faceMesh`,faceMesh);
 console.log(`faceLandmarksDetection:`, faceLandmarksDetection);
 
 import * as THREE from "three";
+import { eventLog } from "./log_utils";
 
 
 
@@ -41,6 +42,7 @@ export default class App{
   renderer:THREE.WebGLRenderer;
 
   constructor(){
+    eventLog("new App()");
     this.webcam=document.querySelector(".p-app__webcam");
     this.debugCanvas=document.querySelector(".p-app__debug-view");
     this.debugContext2d=this.debugCanvas.getContext("2d");
@@ -172,16 +174,16 @@ export default class App{
     uiElement.style.display="block";
 
     this.canvas.addEventListener("webglcontextlost",()=>{
-      console.log("this.canvas webglcontextlost");
+      eventLog("this.canvas webglcontextlost");
     });
     this.canvas.addEventListener("webglcontextrestored",()=>{
-      console.log("this.canvas webglcontextrestored");
+      eventLog("this.canvas webglcontextrestored");
     });
     this.debugCanvas.addEventListener("webglcontextlost",()=>{
-      console.log("this.debugCanvas webglcontextlost");
+      eventLog("this.debugCanvas webglcontextlost");
     });
     this.debugCanvas.addEventListener("webglcontextrestored",()=>{
-      console.log("this.debugCanvas webglcontextrestored");
+      eventLog("this.debugCanvas webglcontextrestored");
     });
 
   }
