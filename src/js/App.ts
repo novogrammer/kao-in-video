@@ -247,4 +247,8 @@ export default class App{
     }
 
   }
+  getMemoryInfo(){
+    return this.renderer.getContext().getExtension('GMAN_webgl_memory').getMemoryInfo();
+
+  }
 }
