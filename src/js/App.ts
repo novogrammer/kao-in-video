@@ -250,7 +250,15 @@ export default class App{
 
   }
   getMemoryInfo(){
-    return this.renderer.getContext().getExtension('GMAN_webgl_memory').getMemoryInfo();
+    const context=this.renderer.getContext();
+    if(!context){
+      throw new Error("context is null");
+    }
+    const ext=context.getExtension('GMAN_webgl_memory');
+    if(!ext){
+      throw new Error("ext is null");
+    }
+    return ext.getMemoryInfo();
 
   }
 }
