@@ -66,3 +66,18 @@ body{
     bottom:0;
   }
 }
+
+.c-notice-orientation{
+  display: none;
+  @media (orientation: portrait){
+    width:100%;
+    position:fixed;
+    text-align: center;
+    top:50%;
+    transform:translate(0,-50%);
+    display:block;
+    font-size:5vw;
+    color:#f0f;
+
+  }
+}
