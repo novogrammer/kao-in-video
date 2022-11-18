@@ -69,7 +69,7 @@ body{
 
 .c-notice-orientation{
   display: none;
-  @media (orientation: portrait){
+  @media only screen and (max-width: 767px) and (orientation: portrait){
     width:100%;
     position:fixed;
     text-align: center;
