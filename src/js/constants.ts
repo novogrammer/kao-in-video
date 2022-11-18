@@ -27,19 +27,36 @@ export const VIDEO_PARAMS_LIST=[
   //   url:`${window.relRoot}assets/movie/kari2.mp4`,
   // },
 
-  {
-    url:`${window.relRoot}assets/movie/makudo_migihidari.mp4`,
-  },
-  {
-    url:`${window.relRoot}assets/movie/makudo_nikoniko.mp4`,
-  },
-  {
-    url:`${window.relRoot}assets/movie/makudo_sumaho.mp4`,
-  },
-  {
-    url:`${window.relRoot}assets/movie/makudo_note.mp4`,
-  },
+  // {
+  //   url:`${window.relRoot}assets/movie/makudo_migihidari.mp4`,
+  // },
+  // {
+  //   url:`${window.relRoot}assets/movie/makudo_nikoniko.mp4`,
+  // },
+  // {
+  //   url:`${window.relRoot}assets/movie/makudo_sumaho.mp4`,
+  // },
+  // {
+  //   url:`${window.relRoot}assets/movie/makudo_note.mp4`,
+  // },
 
-
+  {
+    url:`${window.relRoot}assets/movie/blend_migihidari.mp4`,
+  },
+  {
+    url:`${window.relRoot}assets/movie/blend_nikoniko.mp4`,
+  },
+  {
+    url:`${window.relRoot}assets/movie/blend_sumaho.mp4`,
+  },
+  {
+    url:`${window.relRoot}assets/movie/blend_note.mp4`,
+  },
+  {
+    url:`${window.relRoot}assets/movie/blend_kaminoke.mp4`,
+  },
+  {
+    url:`${window.relRoot}assets/movie/blend_ushiro.mp4`,
+  },
 
 ];
