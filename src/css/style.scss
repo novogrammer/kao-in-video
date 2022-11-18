@@ -82,3 +82,15 @@ body{
 
   }
 }
+.c-error{
+  white-space: pre;
+  pointer-events: none;
+  width:100%;
+  position:fixed;
+  text-align: center;
+  top:50%;
+  transform:translate(0,-50%);
+  display:block;
+  font-size:5vw;
+  color:#f00;
+}

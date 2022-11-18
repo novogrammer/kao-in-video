@@ -175,12 +175,14 @@ export default class App{
 
     this.canvas.addEventListener("webglcontextlost",()=>{
       eventLog("this.canvas webglcontextlost");
+      this.showUnrecoverableError("this.canvas webglcontextlost\nリロードしてください。\nPlease reload.");
     });
     this.canvas.addEventListener("webglcontextrestored",()=>{
       eventLog("this.canvas webglcontextrestored");
     });
     this.debugCanvas.addEventListener("webglcontextlost",()=>{
       eventLog("this.debugCanvas webglcontextlost");
+      this.showUnrecoverableError("this.debugCanvas webglcontextlost\nリロードしてください。\nPlease reload.");
     });
     this.debugCanvas.addEventListener("webglcontextrestored",()=>{
       eventLog("this.debugCanvas webglcontextrestored");
@@ -260,5 +262,32 @@ export default class App{
     }
     return ext.getMemoryInfo();
 
+  }
+  
+  showUnrecoverableError(message:string){
+    const errorElement=document.querySelector(".c-error");
+    if(!errorElement){
+      // エラー処理なので例外で抜けないようにする。
+      console.error("errorElement is null");
+      return;
+    }
+    console.error(message);
+    // 最後のメッセージだけ表示する
+    errorElement.textContent=message;
+  }
+  forceContextLoss(){
+    const {renderer}=this;
+    if(!renderer){
+      throw new Error("this.renderer is null");
+    }
+    renderer.forceContextLoss();
+    
+  }
+  forceContextRestore(){
+    const {renderer}=this;
+    if(!renderer){
+      throw new Error("this.renderer is null");
+    }
+    renderer.forceContextRestore();
   }
 }
