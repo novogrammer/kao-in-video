@@ -118,19 +118,20 @@ export default class RecorderApp {
     }
 
     try {
-      const faces = await this.detector.estimateFaces(this.video, {
+      let faces = await this.detector.estimateFaces(this.video, {
         flipHorizontal: false,
       });
-      if(faces){
-
-        for (const face of faces) {
-          drawFace(this.context2d,face);
-        }
-        if(this.endedCount==1){
-          this.facesList.push(faces);
-        }
-      }else{
+      if(!faces){
         console.log("faces is null");
+        // 0件として扱う
+        faces = [];
+      }
+
+      for (const face of faces) {
+        drawFace(this.context2d,face);
+      }
+      if(this.endedCount==1){
+        this.facesList.push(faces);
       }
 
     } catch (error) {
