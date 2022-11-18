@@ -51,8 +51,9 @@ body{
     position:absolute;
     left:0;
     top:0;
-    width:25vw;
+    width:20vw;
     height:auto;
+    transform:rotateY(180deg);
   }
   &__view{
     position:absolute;
