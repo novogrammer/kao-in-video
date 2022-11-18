@@ -23,7 +23,7 @@ console.log(`faceMesh`,faceMesh);
 console.log(`faceLandmarksDetection:`, faceLandmarksDetection);
 
 import * as THREE from "three";
-import { eventLog } from "./log_utils";
+import { eventLog as _eventLog } from "./log_utils";
 
 
 
@@ -40,9 +40,10 @@ export default class App{
   stats:Stats|null=null;
   isDebug:boolean=!IS_PRODUCTION;
   renderer:THREE.WebGLRenderer;
+  eventLogMessageList:string[]=[];
 
   constructor(){
-    eventLog("new App()");
+    this.eventLog("new App()");
     this.webcam=document.querySelector(".p-app__webcam");
     this.debugCanvas=document.querySelector(".p-app__debug-view");
     this.debugContext2d=this.debugCanvas.getContext("2d");
@@ -60,6 +61,10 @@ export default class App{
 
     this.setupPromise=this.setupAsync();
     this.updateVideo(0);
+  }
+  eventLog(eventName:string){
+    const message = _eventLog(eventName);
+    this.eventLogMessageList.push(message);
   }
   updateVideo(index:number){
     if(index<VIDEO_PARAMS_LIST.length){
@@ -174,18 +179,18 @@ export default class App{
     uiElement.style.display="block";
 
     this.canvas.addEventListener("webglcontextlost",()=>{
-      eventLog("this.canvas webglcontextlost");
+      this.eventLog("this.canvas webglcontextlost");
       this.showUnrecoverableError("this.canvas webglcontextlost\nリロードしてください。\nPlease reload.");
     });
     this.canvas.addEventListener("webglcontextrestored",()=>{
-      eventLog("this.canvas webglcontextrestored");
+      this.eventLog("this.canvas webglcontextrestored");
     });
     this.debugCanvas.addEventListener("webglcontextlost",()=>{
-      eventLog("this.debugCanvas webglcontextlost");
+      this.eventLog("this.debugCanvas webglcontextlost");
       this.showUnrecoverableError("this.debugCanvas webglcontextlost\nリロードしてください。\nPlease reload.");
     });
     this.debugCanvas.addEventListener("webglcontextrestored",()=>{
-      eventLog("this.debugCanvas webglcontextrestored");
+      this.eventLog("this.debugCanvas webglcontextrestored");
     });
 
   }
